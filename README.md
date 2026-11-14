@@ -19,6 +19,7 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `yazi`     | Terminal file manager                                      |
 | `btop`     | Resource monitor                                           |
 | `gtk`      | GTK 3/4 theme + icon settings for GUI apps                 |
+| `wallpapers` | The desktop wallpaper (aurora)                           |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.
@@ -32,8 +33,19 @@ either one edits both.
 
 ## Fresh machine
 
+**Option A — everything (recommended for switching devices):** installs all
+packages, services, *and* the dotfiles via Ansible:
+
 ```bash
-git clone <this repo> ~/.dotfiles
+git clone git@github.com:rafid4507/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh          # installs Ansible + runs the playbook
+```
+
+**Option B — dotfiles only** (if the packages are already installed):
+
+```bash
+git clone git@github.com:rafid4507/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./install.sh            # stows every package
 chsh -s /usr/bin/fish   # make fish your login shell (needs your password)
