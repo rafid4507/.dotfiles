@@ -18,6 +18,7 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `swaylock` | Screen locker                                              |
 | `yazi`     | Terminal file manager                                      |
 | `btop`     | Resource monitor                                           |
+| `gtk`      | GTK 3/4 theme + icon settings for GUI apps                 |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.

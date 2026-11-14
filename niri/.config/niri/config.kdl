@@ -13,7 +13,7 @@
 input {
     keyboard {
         xkb {
-            layout "us"
+            layout "de"
             // layout "us,ru"
             // options "grp:win_space_toggle,ctrl:nocaps"
         }
@@ -128,7 +128,7 @@ animations {
 // spawn-sh-at-startup.
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
-spawn-at-startup "swaybg" "-i" "/home/rafid/Pictures/wallpapers/catppuccin.png" "-m" "fill"
+spawn-at-startup "swaybg" "-i" "/home/rafid/Pictures/wallpapers/aurora.png" "-m" "fill"
 spawn-at-startup "xwayland-satellite"          // X11 support for old apps
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 spawn-at-startup "nm-applet" "--indicator"
