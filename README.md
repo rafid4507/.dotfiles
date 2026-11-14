@@ -20,6 +20,8 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `btop`     | Resource monitor                                           |
 | `gtk`      | GTK 3/4 theme + icon settings for GUI apps                 |
 | `wallpapers` | The desktop wallpaper (aurora)                           |
+| `applications` | Desktop entries (Notion web app) + icons               |
+| `mimeapps` | Default apps (Chromium browser, Thunar file manager)       |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.
@@ -61,6 +63,25 @@ shared tmux session named `main`**, so your work survives closing a window.
 - Escape hatch (a raw shell, no tmux): `NO_TMUX=1 fish`
 - The bare Linux console (`TERM=linux`) is deliberately excluded, so running
   `niri-session` on tty1 stays clean.
+
+## Default programs
+
+| Role         | App                                                                    |
+| ------------ | ---------------------------------------------------------------------- |
+| Terminal     | `kitty`                                                                |
+| File manager | `thunar` (default handler for `inode/directory`)                       |
+| Browser      | `chromium` (also handles `http`/`https` links)                         |
+| Music        | **Pear Desktop** — `pear-desktop-bin` (the renamed th-ch/youtube-music) |
+| Notion       | Chromium app window: `chromium --app=https://notion.so` (a `Notion` launcher entry ships in the `applications` package) |
+
+**Chromium always opens on the `web` workspace** — the dedicated 10th one —
+including its `--app=` windows such as Notion. Jump there with `Mod+0`.
+
+The music app is not in the official repos; install it from the AUR:
+
+```bash
+yay -S pear-desktop-bin
+```
 
 ## Daily use
 
@@ -108,8 +129,10 @@ works but is meant for nested/testing use.
 | `Mod+O`           | Overview                      |
 | `Mod+H/J/K/L`     | Focus column/window           |
 | `Mod+Ctrl+H/J/K/L`| Move column/window            |
-| `Mod+1..9`        | Go to workspace               |
-| `Mod+Ctrl+1..9`   | Move column to workspace      |
+| `Mod+1..9`        | Go to fixed workspace 1-9     |
+| `Mod+Ctrl+1..9`   | Move column to workspace 1-9  |
+| `Mod+0`           | Go to the `web` workspace (10th) |
+| `Mod+Ctrl+0`      | Move column to `web`          |
 | `Mod+R`           | Cycle column width            |
 | `Mod+F`           | Maximize column               |
 | `Mod+Shift+F`     | Fullscreen                    |

@@ -113,6 +113,24 @@ layout {
 // niri draw the focus ring/border around the window shape correctly.
 prefer-no-csd
 
+// ── Named workspaces ────────────────────────────────────────────────────────
+// Fixed workspaces "1".."9" plus a dedicated "web" workspace (the 10th).
+// Named workspaces always exist and keep a stable position, so Mod+1..9 always
+// land in the same place. Chromium — including its --app= windows such as
+// Notion — is pinned to "web" by the window rule further down; jump there with
+// Mod+0. (niri always keeps one empty dynamic workspace below the named ones,
+// so "web" is the 10th workspace you can actually use.)
+workspace "1"
+workspace "2"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+workspace "8"
+workspace "9"
+workspace "web"
+
 // ── Screenshots ─────────────────────────────────────────────────────────────
 // strftime(3) placeholders. Set to null to disable saving to disk.
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
@@ -165,6 +183,14 @@ window-rule {
 window-rule {
     match app-id=r#"^(org\.keepassxc\.KeePassXC|org\.gnome\.World\.Secrets|com\.bitwarden\.Bitwarden)$"#
     block-out-from "screen-capture"
+}
+
+// Chromium always opens on the dedicated "web" workspace (the 10th), whether it
+// is a normal window or an --app= window (Notion, YouTube Music web, ...). The
+// Wayland app-id for both is "Chromium".
+window-rule {
+    match app-id=r#"^[Cc]hromium$"#
+    open-on-workspace "web"
 }
 
 // ── Key bindings ────────────────────────────────────────────────────────────
@@ -286,24 +312,30 @@ binds {
     Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
 
     // Jump to a specific workspace ------------------------------------------
-    Mod+1 { focus-workspace 1; }
-    Mod+2 { focus-workspace 2; }
-    Mod+3 { focus-workspace 3; }
-    Mod+4 { focus-workspace 4; }
-    Mod+5 { focus-workspace 5; }
-    Mod+6 { focus-workspace 6; }
-    Mod+7 { focus-workspace 7; }
-    Mod+8 { focus-workspace 8; }
-    Mod+9 { focus-workspace 9; }
-    Mod+Ctrl+1 { move-column-to-workspace 1; }
-    Mod+Ctrl+2 { move-column-to-workspace 2; }
-    Mod+Ctrl+3 { move-column-to-workspace 3; }
-    Mod+Ctrl+4 { move-column-to-workspace 4; }
-    Mod+Ctrl+5 { move-column-to-workspace 5; }
-    Mod+Ctrl+6 { move-column-to-workspace 6; }
-    Mod+Ctrl+7 { move-column-to-workspace 7; }
-    Mod+Ctrl+8 { move-column-to-workspace 8; }
-    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    // Refer to the fixed workspaces by NAME (not index) so the binds are robust
+    // even if niri reorders them (e.g. after a config reload).
+    Mod+1 { focus-workspace "1"; }
+    Mod+2 { focus-workspace "2"; }
+    Mod+3 { focus-workspace "3"; }
+    Mod+4 { focus-workspace "4"; }
+    Mod+5 { focus-workspace "5"; }
+    Mod+6 { focus-workspace "6"; }
+    Mod+7 { focus-workspace "7"; }
+    Mod+8 { focus-workspace "8"; }
+    Mod+9 { focus-workspace "9"; }
+    Mod+Ctrl+1 { move-column-to-workspace "1"; }
+    Mod+Ctrl+2 { move-column-to-workspace "2"; }
+    Mod+Ctrl+3 { move-column-to-workspace "3"; }
+    Mod+Ctrl+4 { move-column-to-workspace "4"; }
+    Mod+Ctrl+5 { move-column-to-workspace "5"; }
+    Mod+Ctrl+6 { move-column-to-workspace "6"; }
+    Mod+Ctrl+7 { move-column-to-workspace "7"; }
+    Mod+Ctrl+8 { move-column-to-workspace "8"; }
+    Mod+Ctrl+9 { move-column-to-workspace "9"; }
+
+    // Dedicated "web" workspace (the 10th). Chromium opens there automatically.
+    Mod+0      { focus-workspace "web"; }
+    Mod+Ctrl+0 { move-column-to-workspace "web"; }
 
     // Columns ----------------------------------------------------------------
     Mod+BracketLeft  { consume-or-expel-window-left; }

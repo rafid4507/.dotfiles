@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Notion
+GenericName=Notes, Docs & Wiki
+Comment=Notion as a standalone Chromium app window
+Exec=chromium --app=https://notion.so
+Icon=notion
+Terminal=false
+Categories=Office;
+Keywords=notes;docs;wiki;tasks;
+StartupNotify=true
+StartupWMClass=Chromium

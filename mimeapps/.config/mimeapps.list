@@ -1,0 +1,13 @@
+# Default applications for this desktop.
+# Managed by GNU Stow:  ~/.dotfiles/mimeapps/.config/mimeapps.list
+#
+# Chromium is the default web browser (and handles http/https links);
+# Thunar is the default file manager for directories.
+
+[Default Applications]
+text/html=chromium.desktop
+x-scheme-handler/http=chromium.desktop
+x-scheme-handler/https=chromium.desktop
+x-scheme-handler/about=chromium.desktop
+x-scheme-handler/unknown=chromium.desktop
+inode/directory=thunar.desktop
