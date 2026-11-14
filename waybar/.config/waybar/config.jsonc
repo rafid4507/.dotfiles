@@ -16,7 +16,12 @@
 
     // ── niri ────────────────────────────────────────────────────────────────
     "niri/workspaces": {
-        "format": "{index}"
+        // Show ONLY the workspace you are currently on. niri keeps the named
+        // workspaces (1-9 + "web") alive even when empty, which would otherwise
+        // fill the bar with empty numbered placeholders. {value} prints the
+        // workspace name (e.g. "web") or its index for unnamed workspaces.
+        "current-only": true,
+        "format": "{value}"
     },
     "niri/window": {
         "format": "{title}",
