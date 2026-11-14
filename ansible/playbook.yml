@@ -67,6 +67,7 @@
       - libnotify
       - jq
       - bc
+      - curl
       # Fonts
       - ttf-jetbrains-mono-nerd
       - noto-fonts

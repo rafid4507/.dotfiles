@@ -22,6 +22,7 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `wallpapers` | The desktop wallpaper (aurora)                           |
 | `applications` | Desktop entries (Notion web app) + icons               |
 | `mimeapps` | Default apps (Chromium browser, Thunar file manager)       |
+| `scripts`  | Small helper scripts (`now-playing` album-art popup)       |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.
@@ -82,6 +83,29 @@ The music app is not in the official repos; install it from the AUR:
 ```bash
 yay -S pear-desktop-bin
 ```
+
+## Now playing
+
+Whenever audio starts, a card pops up at the top of the screen with the **album
+art, track title and artist**. It is made of two parts:
+
+- **`scripts` → `~/.local/bin/now-playing`** follows the active player with
+  [`playerctl`](https://github.com/altdesktop/playerctl) (through `playerctld`)
+  and sends a mako notification carrying the cover art. mako's
+  `[app-name=now-playing]` criteria turn it into a big-cover card.
+- **Waybar's `mpris` module** shows a persistent `♪ Title — Artist` readout in
+  the centre of the bar. Click it to play/pause, right-click for next,
+  middle-click for previous.
+
+Both are started by niri at login (`playerctld` + `now-playing` in
+`config.kdl`), so they work for any MPRIS player — Chromium/Notion, Pear
+Desktop, mpv, and so on.
+
+## Status bar
+
+The workspace indicator shows **only the workspace you are currently on**
+(`current-only` in the waybar config), so the named workspaces `1`–`9` and
+`web` no longer fill the bar with empty numbered placeholders.
 
 ## Daily use
 

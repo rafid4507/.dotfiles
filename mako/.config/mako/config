@@ -25,3 +25,18 @@ default-timeout=5000
 [urgency=critical]
 border-color=#f38ba8
 default-timeout=0
+
+# ── "Now playing" popup (sent by ~/.local/bin/now-playing) ───────────────────
+# Album art on top, a larger cover, anchored at the top-centre of the screen.
+# The watcher sets the cover as the notification icon; icon-location=top and a
+# bigger max-icon-size turn the popup into a small "now playing" card.
+[app-name=now-playing]
+anchor=top-center
+default-timeout=6000
+width=380
+height=320
+padding=16
+max-icon-size=180
+icon-location=top
+icon-border-radius=10
+border-color=#cba6f7

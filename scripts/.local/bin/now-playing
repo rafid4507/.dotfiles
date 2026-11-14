@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# ============================================================================
+#  now-playing — "now playing" popup with album art
+#
+#  Watches the active MPRIS player (via playerctld) with playerctl and, every
+#  time a new track starts playing, pops a mako notification showing the cover
+#  art, the title and the artist. mako styles the popup through its
+#  [app-name=now-playing] criteria (see mako/.config/mako/config).
+#
+#  Started by niri (see niri/.config/niri/config.kdl). It is safe to leave
+#  running forever: when no player is around it simply waits and retries.
+#
+#  Run it by hand to test:   now-playing &
+# ============================================================================
+set -u
+
+APP_NAME="now-playing"
+STACK_TAG="now-playing"          # mako replaces the previous popup (x-dunst-stack-tag)
+SEP=$'\x1f'                      # unit separator — our playerctl field delimiter
+
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/now-playing"
+mkdir -p "$CACHE"
+
+# Drop cover art we have not used in a week so the cache cannot grow forever.
+find "$CACHE" -type f -mtime +7 -delete 2>/dev/null || true
+
+# status, title, artist, album — joined by the unit separator. (The artwork URL
+# is fetched separately: players publish it a moment after the title.)
+FMT="{{status}}${SEP}{{title}}${SEP}{{artist}}${SEP}{{album}}"
+
+last_key=""
+
+# Players (Chromium in particular) report the new title a moment before the new
+# artwork URL, so poll for it briefly instead of trusting the first event.
+art_url() {
+    local url i
+    for i in 1 2 3 4 5 6 7 8; do
+        url="$(playerctl -p playerctld metadata mpris:artUrl 2>/dev/null)"
+        [[ -n "$url" ]] && { printf '%s' "$url"; return 0; }
+        sleep 0.2
+    done
+    return 1
+}
+
+# Download/copy the artwork into the cache and echo the local path (or nothing).
+resolve_art() {
+    local arturl="$1" src="" ext name dest
+    [[ -n "$arturl" ]] || return 0
+    case "$arturl" in
+        file://*)           src="${arturl#file://}" ;;
+        http://*|https://*) src="$arturl" ;;
+        *) return 0 ;;
+    esac
+    ext="${src##*.}"; ext="${ext%%\?*}"
+    case "$ext" in
+        png|jpg|jpeg|webp|gif|bmp) ;;
+        *) ext=png ;;
+    esac
+    name="$(printf '%s' "$arturl" | sha1sum | cut -c1-16)"
+    dest="$CACHE/$name.$ext"
+    if [[ ! -s "$dest" ]]; then
+        if [[ -f "$src" ]]; then
+            cp -f -- "$src" "$dest" 2>/dev/null || dest=""
+        else
+            curl -fsSL --max-time 10 -- "$arturl" -o "$dest" 2>/dev/null \
+                || { rm -f -- "$dest"; dest=""; }
+        fi
+    fi
+    [[ -s "$dest" ]] && printf '%s' "$dest"
+}
+
+notify_track() {
+    local status="$1" title="$2" artist="$3" album="$4"
+
+    # Only announce tracks that are actually playing...
+    [[ "$status" == "Playing" ]] || return 0
+    # ...and that have something to say.
+    [[ -n "$title$artist" ]] || return 0
+
+    # De-duplicate: playerctl re-prints the current track every time it
+    # (re)connects, and we do not want a popup on every restart.
+    local key="${title}|${artist}|${album}"
+    [[ "$key" == "$last_key" ]] && return 0
+    last_key="$key"
+
+    local arturl icon
+    arturl="$(art_url)" || arturl=""
+    icon="$(resolve_art "$arturl")"
+
+    local body="$artist"
+    [[ -n "$album" ]] && body="${body:+$body — }$album"
+    [[ -n "$title" ]] || title="Now playing"
+
+    local args=(-a "$APP_NAME" -t 6000 -h "string:x-dunst-stack-tag:$STACK_TAG")
+    [[ -n "$icon" ]] && args+=(-i "$icon")
+    notify-send "${args[@]}" "$title" "$body"
+}
+
+# Follow the active player. When playerctld is not up (yet) playerctl exits at
+# once, so we retry every couple of seconds until it is.
+while true; do
+    while IFS= read -r line; do
+        IFS="$SEP" read -r status title artist album <<<"$line"
+        notify_track "$status" "$title" "$artist" "$album"
+    done < <(playerctl -p playerctld metadata --follow --format "$FMT" 2>/dev/null)
+    sleep 2
+done

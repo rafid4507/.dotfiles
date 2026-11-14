@@ -146,6 +146,11 @@ animations {
 // spawn-sh-at-startup.
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
+// "Now playing": playerctld tracks the active MPRIS player (Waybar's mpris
+// module follows it) and now-playing pops the album-art notification whenever
+// the track changes. See scripts/.local/bin/now-playing.
+spawn-at-startup "playerctld"
+spawn-sh-at-startup "exec \"$HOME/.local/bin/now-playing\""
 // $HOME is expanded because this runs through a shell. The image ships with
 // the dotfiles (package "wallpapers"), so a fresh machine gets it too.
 spawn-sh-at-startup "swaybg -i \"$HOME/.local/share/wallpapers/aurora.png\" -m fill"

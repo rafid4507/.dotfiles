@@ -63,6 +63,13 @@ window#waybar {
     color: #89b4fa;
     padding: 0 6px;
 }
+#mpris {
+    color: #cba6f7;
+    padding: 0 10px;
+}
+#mpris.paused {
+    color: #6c7086;
+}
 #tray {
     padding: 0 6px;
 }

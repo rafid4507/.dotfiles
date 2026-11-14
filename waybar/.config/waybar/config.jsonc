@@ -11,7 +11,7 @@
     "margin-right": 10,
 
     "modules-left": ["niri/workspaces", "niri/window"],
-    "modules-center": ["clock"],
+    "modules-center": ["mpris", "clock"],
     "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory"],
 
     // ── niri ────────────────────────────────────────────────────────────────
@@ -33,6 +33,25 @@
     "clock": {
         "format": "  {:%a %d %b  %H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>"
+    },
+
+    // ── now playing (MPRIS) ─────────────────────────────────────────────────
+    // Follows the active player through playerctld (started by niri). Waybar
+    // can only draw text, so this is the persistent "title — artist" readout
+    // with play/pause/next/prev on click; the album art itself shows up in the
+    // mako popup sent by ~/.local/bin/now-playing.
+    "mpris": {
+        "format": "♪  {dynamic}",
+        "format-paused": "♪  {dynamic}",
+        "format-stopped": "",
+        "dynamic-len": 55,
+        "title-len": 35,
+        "artist-len": 25,
+        "album-len": 0,
+        "tooltip-format": "{player} — {status}\n{artist} — {title}\n{album}",
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "on-click-middle": "playerctl previous"
     },
 
     // ── system tray ─────────────────────────────────────────────────────────
