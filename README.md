@@ -49,6 +49,19 @@ stow -R niri            # relink (after adding/removing files)
 git add -A && git commit -m "..." && git push
 ```
 
+## Rebuilding the whole machine (optional)
+
+The [`ansible/`](ansible/) folder contains a playbook that installs every
+package, enables the services, and deploys these dotfiles on a fresh Arch
+install with a single command. It is **not required** for normal use — Stow and
+`install.sh` are enough — but it makes a from-scratch rebuild one command:
+
+```bash
+cd ansible
+ansible-galaxy collection install -r requirements.yml
+ansible-playbook playbook.yml --ask-become-pass
+```
+
 ## Starting the desktop
 
 Log in on a TTY (tty1) and run:

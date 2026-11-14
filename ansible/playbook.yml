@@ -1,0 +1,195 @@
+---
+# ============================================================================
+#  playbook.yml — rebuild this Arch + niri desktop from scratch
+#
+#  What it does:
+#    1. Upgrades the system and installs every official package we use
+#    2. Installs the AUR helper (yay) and the Catppuccin GTK theme
+#    3. Enables Bluetooth + NetworkManager (system) and PipeWire (user)
+#    4. Clones this dotfiles repo and deploys it with GNU Stow
+#    5. Sets fish as the login shell
+#
+#  It is IDEMPOTENT — running it again changes nothing if the machine is
+#  already set up.
+#
+#  Run it with:
+#    ansible-galaxy collection install -r requirements.yml
+#    ansible-playbook playbook.yml --ask-become-pass
+# ============================================================================
+
+- name: System packages and services
+  hosts: arch
+  become: true
+
+  vars:
+    # Official-repo packages, grouped by purpose.
+    pacman_packages:
+      # Compositor, terminal, shell, dotfile tooling
+      - niri
+      - kitty
+      - fish
+      - tmux
+      - stow
+      - git
+      - vim
+      - base-devel
+      # Bar, launcher, notifications, lock/idle, wallpaper
+      - waybar
+      - fuzzel
+      - mako
+      - swaybg
+      - swaylock
+      - swayidle
+      # Screenshots + clipboard
+      - grim
+      - slurp
+      - swappy
+      - wl-clipboard
+      - cliphist
+      # XWayland bridge + portals + polkit agent
+      - xwayland-satellite
+      - xdg-desktop-portal
+      - xdg-desktop-portal-gtk
+      - xdg-desktop-portal-gnome
+      - polkit-gnome
+      - xdg-user-dirs
+      - xdg-utils
+      # Audio
+      - pipewire
+      - pipewire-pulse
+      - pipewire-alsa
+      - wireplumber
+      - pavucontrol
+      - alsa-utils
+      # Hardware keys / media / misc
+      - brightnessctl
+      - playerctl
+      - libnotify
+      - jq
+      - bc
+      # Fonts
+      - ttf-jetbrains-mono-nerd
+      - noto-fonts
+      - noto-fonts-cjk
+      - noto-fonts-emoji
+      # CLI / TUI apps
+      - yazi
+      - btop
+      - starship
+      - fastfetch
+      - fzf
+      - eza
+      - bat
+      - ripgrep
+      - fd
+      - zoxide
+      - imagemagick
+      # GUI apps
+      - thunar
+      - gvfs
+      - mpv
+      - imv
+      - chromium
+      - papirus-icon-theme
+      # Network + Bluetooth services
+      - networkmanager
+      - network-manager-applet
+      - bluez
+      - bluez-utils
+
+    # AUR packages (built from source)
+    aur_packages:
+      - catppuccin-gtk-theme-mocha
+
+    system_services:
+      - bluetooth.service
+      - NetworkManager.service
+
+  tasks:
+    - name: Update the pacman cache and upgrade the system
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
+
+    - name: Install official packages
+      community.general.pacman:
+        name: "{{ pacman_packages }}"
+        state: present
+
+    # AUR packages cannot be built as root, so we use a dedicated unprivileged
+    # builder user that may only run `pacman` via sudo without a password.
+    - name: Create an unprivileged AUR builder user
+      ansible.builtin.user:
+        name: aur_builder
+        system: true
+        create_home: true
+        home: /var/lib/aur_builder
+
+    - name: Let aur_builder run pacman without a password
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/11-install-aur_builder
+        content: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman\n"
+        mode: "0440"
+        validate: "visudo -cf %s"
+
+    - name: Install yay (AUR helper)
+      kewlfft.aur.aur:
+        name: yay
+        use: makepkg
+        state: present
+      become_user: aur_builder
+
+    - name: Install AUR packages
+      kewlfft.aur.aur:
+        name: "{{ aur_packages }}"
+        use: yay
+        state: present
+      become_user: aur_builder
+
+    - name: Enable system services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop: "{{ system_services }}"
+
+
+- name: User environment (dotfiles, shell, user services)
+  hosts: arch
+  become: false
+
+  vars:
+    dotfiles_repo: "git@github.com:rafid4507/.dotfiles.git"
+    dotfiles_dir: "{{ ansible_env.HOME }}/.dotfiles"
+
+  tasks:
+    - name: Clone or update the dotfiles repo
+      ansible.builtin.git:
+        repo: "{{ dotfiles_repo }}"
+        dest: "{{ dotfiles_dir }}"
+        version: main
+        update: true
+
+    - name: Deploy dotfiles with GNU Stow
+      ansible.builtin.command:
+        cmd: ./install.sh
+        chdir: "{{ dotfiles_dir }}"
+      register: stow_run
+      changed_when: "'LINK' in stow_run.stdout"
+
+    - name: Set fish as the login shell
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        shell: /usr/bin/fish
+      become: true
+
+    - name: Enable PipeWire user services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        scope: user
+        enabled: true
+        state: started
+      loop:
+        - pipewire.socket
+        - pipewire-pulse.socket
+        - wireplumber.service
