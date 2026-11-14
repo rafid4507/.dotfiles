@@ -42,7 +42,7 @@ MARQUEE_MS = 60         # ms between marquee ticks
 EQ_MS = 130             # ms between equalizer frames
 TOP_MARGIN = 48         # gap below the top of the screen (clears the bar)
 
-CSS = b"""
+CSS = """
 .np-card {
     background: #1e1e2e;
     border: 2px solid #cba6f7;
@@ -55,6 +55,14 @@ CSS = b"""
 .np-eq    { color: #cba6f7; font-size: 15px; }
 .np-scroll scrollbar { min-width: 0; min-height: 0; opacity: 0; }
 """
+
+
+def _load_css(provider):
+    # GTK >= 4.12 has load_from_string; older PyGObject wants bytes.
+    if hasattr(provider, "load_from_string"):
+        provider.load_from_string(CSS)
+    else:  # pragma: no cover - only on ancient bindings
+        provider.load_from_data(CSS.encode())
 
 
 class Popup(Gtk.Application):
@@ -88,7 +96,7 @@ class Popup(Gtk.Application):
         LayerShell.set_keyboard_mode(win, LayerShell.KeyboardMode.NONE)
 
         provider = Gtk.CssProvider()
-        provider.load_from_data(CSS)
+        _load_css(provider)
         Gtk.StyleContext.add_provider_for_display(
             win.get_display(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
