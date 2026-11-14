@@ -1,0 +1,35 @@
+# yazi — terminal file manager
+# Docs: https://yazi-rs.github.io/docs/configuration/overview
+# The Catppuccin theme lives in theme.toml (next to this file).
+
+[mgr]
+ratio          = [1, 4, 3]
+show_hidden    = false
+show_symlink   = true
+linemode       = "size"
+sort_by        = "natural"
+sort_sensitive = false
+sort_reverse   = false
+sort_dir_first = true
+
+[preview]
+tab_size   = 2
+max_width  = 1000
+max_height = 1000
+image_filter = "triangle"
+image_quality = 90
+
+[opener]
+edit = [{ run = '$EDITOR "$@"', block = true, for = "unix" }]
+open = [{ run = 'xdg-open "$@"', desc = "Open", for = "unix" }]
+reveal = [{ run = 'thunar "$@"', desc = "Reveal", for = "unix" }]
+play = [{ run = 'mpv "$@"', desc = "Play", for = "unix" }]
+
+[open]
+rules = [
+    { name = "*.md", use = "edit" },
+    { mime = "text/*", use = "edit" },
+    { mime = "image/*", use = "open" },
+    { mime = "video/*", use = "play" },
+    { mime = "audio/*", use = "play" },
+]

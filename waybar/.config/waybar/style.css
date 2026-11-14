@@ -1,0 +1,93 @@
+/* waybar — Catppuccin Mocha
+ * Floating "pill" look: the bar background is transparent and each module
+ * group gets its own rounded background. */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: #cdd6f4;
+}
+
+/* Each of the three groups becomes a pill. */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: #1e1e2e;
+    border-radius: 12px;
+    padding: 0 10px;
+    margin: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ── niri workspaces ──────────────────────────────────────────────────────── */
+#workspaces {
+    padding: 0 2px;
+}
+#workspaces button {
+    padding: 2px 8px;
+    margin: 4px 2px;
+    color: #6c7086;
+    background: transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+#workspaces button:hover {
+    color: #cdd6f4;
+    background: #313244;
+}
+#workspaces button.active {
+    color: #11111b;
+    background: #cba6f7;
+}
+#workspaces button.urgent {
+    color: #11111b;
+    background: #f38ba8;
+}
+
+/* ── focused window title ─────────────────────────────────────────────────── */
+#window {
+    color: #bac2de;
+    padding: 0 6px;
+}
+
+/* ── modules ──────────────────────────────────────────────────────────────── */
+#clock {
+    color: #89b4fa;
+    padding: 0 6px;
+}
+#tray {
+    padding: 0 6px;
+}
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+#pulseaudio {
+    color: #a6e3a1;
+    padding: 0 8px;
+}
+#pulseaudio.muted {
+    color: #f38ba8;
+}
+#network {
+    color: #89dceb;
+    padding: 0 8px;
+}
+#network.disconnected {
+    color: #f38ba8;
+}
+#cpu {
+    color: #f9e2af;
+    padding: 0 8px;
+}
+#memory {
+    color: #fab387;
+    padding: 0 8px;
+}

@@ -1,0 +1,72 @@
+// waybar — status bar for niri
+// Docs: https://github.com/Alexays/Waybar/wiki
+// This is JSONC: // comments are allowed.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "spacing": 6,
+    "margin-top": 8,
+    "margin-left": 10,
+    "margin-right": 10,
+
+    "modules-left": ["niri/workspaces", "niri/window"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory"],
+
+    // ── niri ────────────────────────────────────────────────────────────────
+    "niri/workspaces": {
+        "format": "{index}"
+    },
+    "niri/window": {
+        "format": "{title}",
+        "max-length": 60,
+        "separate-outputs": true
+    },
+
+    // ── clock ───────────────────────────────────────────────────────────────
+    "clock": {
+        "format": "  {:%a %d %b  %H:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>"
+    },
+
+    // ── system tray ─────────────────────────────────────────────────────────
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    // ── audio ───────────────────────────────────────────────────────────────
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "  muted",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "scroll-step": 5
+    },
+
+    // ── network ─────────────────────────────────────────────────────────────
+    "network": {
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  {ifname}",
+        "format-linked": "  {ifname}",
+        "format-disconnected": "  offline",
+        "tooltip-format": "{ifname}\n{ipaddr}/{cidr}\n{up} ↑  {down} ↓",
+        "interval": 3
+    },
+
+    // ── resources ───────────────────────────────────────────────────────────
+    "cpu": {
+        "format": "  {usage}%",
+        "interval": 2,
+        "on-click": "kitty -e btop"
+    },
+    "memory": {
+        "format": "  {percentage}%",
+        "interval": 5,
+        "on-click": "kitty -e btop"
+    }
+}
