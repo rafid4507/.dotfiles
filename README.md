@@ -51,6 +51,17 @@ cd ~/.dotfiles
 chsh -s /usr/bin/fish   # make fish your login shell (needs your password)
 ```
 
+## Shell: fish + tmux
+
+`fish` is your login shell, and every interactive terminal **auto-attaches to a
+shared tmux session named `main`**, so your work survives closing a window.
+
+- Detach: `Ctrl-a d` · Reattach: just open any terminal (or `tmux a -t main`)
+- Split: `Ctrl-a |` / `Ctrl-a -` · New window: `Ctrl-a c` · Reload config: `Ctrl-a r`
+- Escape hatch (a raw shell, no tmux): `NO_TMUX=1 fish`
+- The bare Linux console (`TERM=linux`) is deliberately excluded, so running
+  `niri-session` on tty1 stays clean.
+
 ## Daily use
 
 ```bash

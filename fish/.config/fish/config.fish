@@ -5,6 +5,24 @@
 #  runs for interactive shells (i.e. your terminals, not scripts).
 # ============================================================================
 
+# ── Always run inside tmux ───────────────────────────────────────────────────
+# Every interactive terminal attaches to one shared tmux session called "main"
+# (creating it the first time). New terminals join the *same* session, so your
+# work persists and you can detach with  Ctrl-a d  and reattach by opening a
+# new terminal.
+#
+# It deliberately skips when:
+#   * we are already inside tmux          ($TMUX is set)
+#   * it is the bare Linux console        (TERM=linux) so `niri-session` stays
+#                                          clean on tty1
+#   * the escape hatch is set             (run `NO_TMUX=1 fish` for a raw shell)
+if status is-interactive
+    and not set -q TMUX
+    and not set -q NO_TMUX
+    and test "$TERM" != linux
+    exec tmux new-session -A -s main
+end
+
 if status is-interactive
     # A clean greeting (fish otherwise prints a welcome message).
     set -g fish_greeting ""
