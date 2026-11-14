@@ -40,6 +40,9 @@
       - swaybg
       - swaylock
       - swayidle
+      # Animated "now playing" popup (GTK4 layer-shell widget)
+      - python-gobject
+      - gtk4-layer-shell
       # Screenshots + clipboard
       - grim
       - slurp

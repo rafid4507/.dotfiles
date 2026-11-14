@@ -10,18 +10,18 @@
     "margin-left": 10,
     "margin-right": 10,
 
-    "modules-left": ["niri/workspaces", "niri/window"],
-    "modules-center": ["mpris", "clock"],
+    "modules-left": ["custom/workspaces", "niri/window"],
+    "modules-center": ["custom/nowplaying", "clock"],
     "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory"],
 
     // ── niri ────────────────────────────────────────────────────────────────
-    "niri/workspaces": {
-        // Show ONLY the workspace you are currently on. niri keeps the named
-        // workspaces (1-9 + "web") alive even when empty, which would otherwise
-        // fill the bar with empty numbered placeholders. {value} prints the
-        // workspace name (e.g. "web") or its index for unnamed workspaces.
-        "current-only": true,
-        "format": "{value}"
+    // Compact workspace indicator: a dot for every workspace that has windows,
+    // plus the name of the one you are on (scripts/.local/bin/niri-workspaces).
+    "custom/workspaces": {
+        "exec": "$HOME/.local/bin/niri-workspaces",
+        "interval": 1,
+        "tooltip": false,
+        "format": "{text}"
     },
     "niri/window": {
         "format": "{title}",
@@ -36,19 +36,15 @@
     },
 
     // ── now playing (MPRIS) ─────────────────────────────────────────────────
-    // Follows the active player through playerctld (started by niri). Waybar
-    // can only draw text, so this is the persistent "title — artist" readout
-    // with play/pause/next/prev on click; the album art itself shows up in the
-    // mako popup sent by ~/.local/bin/now-playing.
-    "mpris": {
-        "format": "♪  {dynamic}",
-        "format-paused": "♪  {dynamic}",
-        "format-stopped": "",
-        "dynamic-len": 55,
-        "title-len": 35,
-        "artist-len": 25,
-        "album-len": 0,
-        "tooltip-format": "{player} — {status}\n{artist} — {title}\n{album}",
+    // Animated readout from scripts/.local/bin/now-playing-bar: a small
+    // equalizer plus the track name scrolling right-to-left. The script loops
+    // and prints one frame per line, so there is no 'interval' — waybar streams
+    // its output. Click to play/pause, right-click next, middle-click previous.
+    "custom/nowplaying": {
+        "exec": "$HOME/.local/bin/now-playing-bar",
+        "restart-interval": 1,
+        "tooltip": false,
+        "format": "{text}",
         "on-click": "playerctl play-pause",
         "on-click-right": "playerctl next",
         "on-click-middle": "playerctl previous"

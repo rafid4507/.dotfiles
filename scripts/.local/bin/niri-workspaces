@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# ============================================================================
+#  niri-workspaces — compact workspace indicator for waybar (custom module)
+#
+#  Shows a dot for every workspace that actually has windows, and the name (or
+#  index) of the workspace you are currently on. Empty workspaces are hidden.
+#  The output is pango markup (waybar's custom module does not escape it).
+#
+#  Waybar's built-in niri/workspaces module cannot mix a name for one workspace
+#  with dots for the others, hence this script.
+# ============================================================================
+set -u
+
+ws="$(niri msg --json workspaces 2>/dev/null)" || exit 0
+[[ -n "$ws" ]] || exit 0
+win="$(niri msg --json windows 2>/dev/null)"
+[[ -n "$win" ]] || win='[]'
+
+jq -nr --argjson ws "$ws" --argjson win "$win" '
+    # How many windows each workspace has.
+    ($win
+     | map(select(.workspace_id != null))
+     | group_by(.workspace_id)
+     | map({key: (.[0].workspace_id | tostring), value: length})
+     | from_entries) as $counts
+    | ($ws | sort_by(.idx))
+    | map(
+        (.name // (.idx | tostring)) as $label
+        | if .is_focused then
+            "<span foreground=\"#cba6f7\" weight=\"bold\">\($label)</span>"
+          elif (($counts[(.id | tostring)] // 0) > 0) then
+            "<span foreground=\"#6c7086\">●</span>"
+          else empty
+          end
+      )
+    | join("  ")
+'

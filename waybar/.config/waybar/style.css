@@ -27,29 +27,12 @@ window#waybar {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-/* ── niri workspaces ──────────────────────────────────────────────────────── */
-#workspaces {
-    padding: 0 2px;
-}
-#workspaces button {
-    padding: 2px 8px;
-    margin: 4px 2px;
-    color: #6c7086;
-    background: transparent;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-#workspaces button:hover {
-    color: #cdd6f4;
-    background: #313244;
-}
-#workspaces button.active {
-    color: #11111b;
-    background: #cba6f7;
-}
-#workspaces button.urgent {
-    color: #11111b;
-    background: #f38ba8;
+/* ── workspace indicator (custom/workspaces) ──────────────────────────────── */
+/* A dot per workspace that has windows, plus the name of the current one.
+ * Kept a touch smaller than the rest of the bar. */
+#custom-workspaces {
+    font-size: 12px;
+    padding: 0 8px;
 }
 
 /* ── focused window title ─────────────────────────────────────────────────── */
@@ -63,12 +46,9 @@ window#waybar {
     color: #89b4fa;
     padding: 0 6px;
 }
-#mpris {
+#custom-nowplaying {
     color: #cba6f7;
     padding: 0 10px;
-}
-#mpris.paused {
-    color: #6c7086;
 }
 #tray {
     padding: 0 6px;

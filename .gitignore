@@ -8,3 +8,7 @@
 
 # Generated / runtime state that should never be tracked
 fish_variables
+
+# Python byte cache
+__pycache__/
+*.pyc

@@ -22,7 +22,7 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `wallpapers` | The desktop wallpaper (aurora)                           |
 | `applications` | Desktop entries (Notion web app) + icons               |
 | `mimeapps` | Default apps (Chromium browser, Thunar file manager)       |
-| `scripts`  | Small helper scripts (`now-playing` album-art popup)       |
+| `scripts`  | Helper scripts (`now-playing` popup + bar, workspace dots) |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.
@@ -86,26 +86,47 @@ yay -S pear-desktop-bin
 
 ## Now playing
 
-Whenever audio starts, a card pops up at the top of the screen with the **album
-art, track title and artist**. It is made of two parts:
+When a track starts, a small **animated card** appears near the top of the
+screen: a tiny cover, the track name **scrolling right-to-left**, the artist,
+and a little **animated equalizer**. There is no duration/seek bar on purpose —
+the animation is what tells you it is actually playing.
+
+The same scrolling name + equalizer also live in the centre of the bar.
 
 - **`scripts` → `~/.local/bin/now-playing`** follows the active player with
   [`playerctl`](https://github.com/altdesktop/playerctl) (through `playerctld`)
-  and sends a mako notification carrying the cover art. mako's
-  `[app-name=now-playing]` criteria turn it into a big-cover card.
-- **Waybar's `mpris` module** shows a persistent `♪ Title — Artist` readout in
-  the centre of the bar. Click it to play/pause, right-click for next,
-  middle-click for previous.
+  and, on every track change, launches the popup widget.
+- **`scripts` → `~/.local/bin/now-playing-widget`** *is* the popup: a tiny GTK4
+  + [`gtk4-layer-shell`](https://github.com/wmww/gtk4-layer-shell) card anchored
+  at the top-centre. It auto-hides after a few seconds.
+- **`scripts` → `~/.local/bin/now-playing-bar`** drives the bar readout: the
+  `custom/nowplaying` waybar module streams one animation frame per line. Click
+  it to play/pause, right-click for next, middle-click for previous.
 
-Both are started by niri at login (`playerctld` + `now-playing` in
-`config.kdl`), so they work for any MPRIS player — Chromium/Notion, Pear
-Desktop, mpv, and so on.
+Everything is started by niri at login (`playerctld` + `now-playing` in
+`config.kdl`) and works for any MPRIS player — Chromium/Notion, Pear Desktop,
+mpv, and so on.
+
+The animated popup needs two extra packages (in Arch's `extra`; the Ansible
+playbook installs them automatically):
+
+```bash
+sudo pacman -S python-gobject gtk4-layer-shell
+```
+
+Without them, `now-playing` falls back to a plain (static) mako notification, so
+the feature keeps working either way.
 
 ## Status bar
 
-The workspace indicator shows **only the workspace you are currently on**
-(`current-only` in the waybar config), so the named workspaces `1`–`9` and
-`web` no longer fill the bar with empty numbered placeholders.
+Two custom modules replace waybar's built-ins, because neither can animate:
+
+- **`custom/workspaces`** (`~/.local/bin/niri-workspaces`) shows a **dot for
+  every workspace that has windows**, plus the **name of the one you are on**
+  (e.g. `● ● web`). Empty named workspaces are hidden. The dots are not
+  individually clickable — use `Mod+1..9` / `Mod+0` to switch.
+- **`custom/nowplaying`** (`~/.local/bin/now-playing-bar`) is the scrolling
+  track readout described above.
 
 ## Daily use
 

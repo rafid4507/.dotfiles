@@ -26,17 +26,17 @@ default-timeout=5000
 border-color=#f38ba8
 default-timeout=0
 
-# ── "Now playing" popup (sent by ~/.local/bin/now-playing) ───────────────────
-# Album art on top, a larger cover, anchored at the top-centre of the screen.
-# The watcher sets the cover as the notification icon; icon-location=top and a
-# bigger max-icon-size turn the popup into a small "now playing" card.
+# ── "Now playing" popup (fallback, sent by ~/.local/bin/now-playing) ─────────
+# Only used when the animated GTK4 widget (now-playing-widget) is unavailable,
+# i.e. when python-gobject / gtk4-layer-shell are not installed. A compact
+# horizontal card: small cover on the left, title + artist on the right.
 [app-name=now-playing]
 anchor=top-center
 default-timeout=6000
-width=380
-height=320
-padding=16
-max-icon-size=180
-icon-location=top
-icon-border-radius=10
+width=340
+height=96
+padding=12
+max-icon-size=56
+icon-location=left
+icon-border-radius=8
 border-color=#cba6f7
