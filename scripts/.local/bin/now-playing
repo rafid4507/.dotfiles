@@ -63,7 +63,7 @@ popup() {
 
     local body="$artist"
     [[ -n "$album" ]] && body="${body:+$body — }$album"
-    notify-send -a "$APP_NAME" -t 6000 -h "string:x-dunst-stack-tag:$STACK_TAG" \
+    notify-send -a "$APP_NAME" -t 4000 -h "string:x-dunst-stack-tag:$STACK_TAG" \
         "$title" "$body"
 }
 

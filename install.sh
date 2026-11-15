@@ -21,7 +21,7 @@ if ! command -v stow >/dev/null; then
 fi
 
 # Every top-level directory is a "stow package".
-packages=(niri fish tmux kitty waybar fuzzel mako swaylock starship yazi btop gtk wallpapers applications mimeapps scripts git)
+packages=(niri fish tmux kitty waybar rofi fuzzel mako swaylock starship yazi btop gtk wallpapers applications mimeapps scripts git)
 
 echo "Stowing into: $HOME"
 for pkg in "${packages[@]}"; do

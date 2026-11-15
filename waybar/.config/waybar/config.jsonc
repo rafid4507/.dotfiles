@@ -1,14 +1,19 @@
 // waybar — status bar for niri
 // Docs: https://github.com/Alexays/Waybar/wiki
 // This is JSONC: // comments are allowed.
+//
+// Layout mirrors the "compact" reference bar: a workspace pill on the left,
+// the focused window next to it, a scrolling track name + clock in the middle,
+// and a tidy group of icon modules on the right. Nerd Font glyphs are used
+// throughout, so text stays short and the bar stays narrow.
 {
     "layer": "top",
     "position": "top",
-    "height": 34,
-    "spacing": 6,
-    "margin-top": 8,
-    "margin-left": 10,
-    "margin-right": 10,
+    "height": 32,
+    "spacing": 4,
+    "margin-top": 6,
+    "margin-left": 8,
+    "margin-right": 8,
 
     "modules-left": ["custom/workspaces", "niri/window"],
     "modules-center": ["custom/nowplaying", "clock"],
@@ -16,30 +21,31 @@
 
     // ── niri ────────────────────────────────────────────────────────────────
     // Compact workspace indicator: a dot for every workspace that has windows,
-    // plus the name of the one you are on (scripts/.local/bin/niri-workspaces).
+    // and the current one drawn as a filled "tab" (scripts/.local/bin/ws-indicator).
     "custom/workspaces": {
-        "exec": "$HOME/.local/bin/niri-workspaces",
+        "exec": "$HOME/.local/bin/ws-indicator",
         "interval": 1,
         "tooltip": false,
         "format": "{text}"
     },
     "niri/window": {
         "format": "{title}",
-        "max-length": 60,
+        "max-length": 36,
         "separate-outputs": true
     },
 
     // ── clock ───────────────────────────────────────────────────────────────
     "clock": {
-        "format": "  {:%a %d %b  %H:%M}",
+        "format": "  {:%a %d %b  %H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>"
     },
 
     // ── now playing (MPRIS) ─────────────────────────────────────────────────
     // Animated readout from scripts/.local/bin/now-playing-bar: a small
-    // equalizer plus the track name scrolling right-to-left. The script loops
-    // and prints one frame per line, so there is no 'interval' — waybar streams
-    // its output. Click to play/pause, right-click next, middle-click previous.
+    // equalizer plus the track name scrolling in a ~12-character window. The
+    // script loops and prints one frame per line, so there is no 'interval' —
+    // waybar streams its output. Click to play/pause, right-click next,
+    // middle-click previous.
     "custom/nowplaying": {
         "exec": "$HOME/.local/bin/now-playing-bar",
         "restart-interval": 1,
@@ -52,40 +58,41 @@
 
     // ── system tray ─────────────────────────────────────────────────────────
     "tray": {
-        "icon-size": 16,
-        "spacing": 8
+        "icon-size": 15,
+        "spacing": 6
     },
 
     // ── audio ───────────────────────────────────────────────────────────────
     "pulseaudio": {
-        "format": "{icon}  {volume}%",
-        "format-muted": "  muted",
+        "format": "{icon} {volume}%",
+        "format-muted": "{icon} muted",
         "format-icons": {
-            "default": ["", "", ""]
+            "default": ["", "", ""]
         },
         "on-click": "pavucontrol",
         "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "scroll-step": 5
     },
 
-    // ── network ─────────────────────────────────────────────────────────────
+    // ── network (icon only — details live in the tooltip) ───────────────────
     "network": {
-        "format-wifi": "  {essid}",
-        "format-ethernet": "  {ifname}",
-        "format-linked": "  {ifname}",
-        "format-disconnected": "  offline",
-        "tooltip-format": "{ifname}\n{ipaddr}/{cidr}\n{up} ↑  {down} ↓",
+        "format-wifi": "",
+        "format-ethernet": "󰈀",
+        "format-linked": "󰈀",
+        "format-disconnected": "",
+        "tooltip-format": "{ifname}\n{ipaddr}\n↑ {bandwidthUpBytesCompact}/s  ↓ {bandwidthDownBytesCompact}/s",
+        "tooltip-format-disconnected": "Offline",
         "interval": 3
     },
 
     // ── resources ───────────────────────────────────────────────────────────
     "cpu": {
-        "format": "  {usage}%",
+        "format": " {usage}%",
         "interval": 2,
         "on-click": "kitty -e btop"
     },
     "memory": {
-        "format": "  {percentage}%",
+        "format": "󰍛 {percentage}%",
         "interval": 5,
         "on-click": "kitty -e btop"
     }

@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 # ============================================================================
-#  niri-workspaces — compact workspace indicator for waybar (custom module)
+#  ws-indicator — compact workspace indicator for waybar (custom module)
 #
-#  Shows a dot for every workspace that actually has windows, and the name (or
-#  index) of the workspace you are currently on. Empty workspaces are hidden.
-#  The output is pango markup (waybar's custom module does not escape it).
+#  Shows a small dot for every workspace that actually has windows, and draws
+#  the workspace you are currently on as a filled "tab" (a pango background
+#  span). Empty workspaces are hidden. The output is pango markup, which
+#  waybar's custom module interprets.
+#
+#  Names are trimmed to at most 12 characters so the indicator stays narrow.
 #
 #  Waybar's built-in niri/workspaces module cannot mix a name for one workspace
 #  with dots for the others, hence this script.
+#
+#  (The file is deliberately NOT called "niri-workspaces": that made `niri`
+#  + <Tab> in the shell complete to a confusing third entry.)
 # ============================================================================
 set -u
 
@@ -28,7 +34,8 @@ jq -nr --argjson ws "$ws" --argjson win "$win" '
         # Keep the label short: at most 12 characters.
         ((.name // (.idx | tostring))[0:12]) as $label
         | if .is_focused then
-            "<span foreground=\"#cba6f7\" weight=\"bold\">\($label)</span>"
+            # Current workspace: a filled tab (mauve background, dark text).
+            "<span background=\"#cba6f7\" foreground=\"#1e1e2e\" weight=\"bold\"> \($label) </span>"
           elif (($counts[(.id | tostring)] // 0) > 0) then
             "<span foreground=\"#6c7086\">●</span>"
           else empty

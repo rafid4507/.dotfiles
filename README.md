@@ -13,7 +13,8 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `tmux`     | Terminal multiplexer                                       |
 | `starship` | Shell prompt                                               |
 | `waybar`   | Status bar                                                 |
-| `fuzzel`   | Application launcher                                       |
+| `rofi`     | Application launcher / window switcher / dmenu             |
+| `fuzzel`   | Fallback launcher (installed, not bound)                   |
 | `mako`     | Notification daemon                                        |
 | `swaylock` | Screen locker                                              |
 | `yazi`     | Terminal file manager                                      |
@@ -22,7 +23,7 @@ with [GNU Stow](https://www.gnu.org/software/stow/).
 | `wallpapers` | The desktop wallpaper (aurora)                           |
 | `applications` | Desktop entries (Notion web app) + icons               |
 | `mimeapps` | Default apps (Chromium browser, Thunar file manager)       |
-| `scripts`  | Helper scripts (`now-playing` popup + bar, workspace dots) |
+| `scripts`  | Helper scripts (`now-playing` popup + bar, workspace indicator) |
 | `git`      | Git configuration                                          |
 
 Theme: **Catppuccin Mocha** everywhere.
@@ -86,14 +87,14 @@ yay -S pear-desktop-bin
 
 ## Now playing
 
-When a track starts, a small **animated card** appears near the top of the
-screen and **auto-hides after a few seconds** (it stays put while the pointer is
-over it). Instead of cover art — which players such as Chromium/YouTube Music
-usually fill with an app or site logo — it shows **small playback buttons**
-(previous / play-pause / next), the track name in a **short scrolling window**
-(about 12 characters at a time), the artist, and a little **animated
-equalizer**. There is no duration/seek bar on purpose — the animation is what
-tells you it is actually playing.
+When a track starts, a small **animated card** appears just under the bar and
+**auto-hides after ~4 seconds** (it stays put while the pointer is over it).
+Instead of cover art — which players such as Chromium/YouTube Music usually fill
+with an app or site logo — it shows **small playback buttons** (previous /
+play-pause / next), the track name in a **short scrolling window** (about 12
+characters at a time), the artist, and a little **animated equalizer**. There is
+no duration/seek bar on purpose — the animation is what tells you it is actually
+playing.
 
 The same scrolling name + equalizer also live in the centre of the bar.
 
@@ -102,8 +103,8 @@ The same scrolling name + equalizer also live in the centre of the bar.
   and, on every track change, launches the popup widget.
 - **`scripts` → `~/.local/bin/now-playing-widget`** *is* the popup: a tiny GTK4
   + [`gtk4-layer-shell`](https://github.com/wmww/gtk4-layer-shell) card anchored
-  at the top-centre. The playback buttons drive `playerctl`; the name scrolls
-  through a ~12-character window. It auto-hides after a few seconds.
+  at the top-centre, hugging the bar. The playback buttons drive `playerctl`;
+  the name scrolls through a ~12-character window. It auto-hides after ~4s.
 - **`scripts` → `~/.local/bin/now-playing-bar`** drives the bar readout: the
   `custom/nowplaying` waybar module streams one animation frame per line. Click
   it to play/pause, right-click for next, middle-click for previous.
@@ -122,17 +123,46 @@ sudo pacman -S python-gobject gtk4-layer-shell
 Without them, `now-playing` falls back to a plain (static) mako notification, so
 the feature keeps working either way.
 
+## Launcher (rofi)
+
+`Mod+D` opens **rofi** (application launcher), `Mod+Tab` opens the window
+switcher, and `Mod+Alt+V` pipes the clipboard history through `rofi -dmenu`.
+It uses the **`squared-material-red`** theme from
+[newmanls/rofi-themes-collection](https://github.com/newmanls/rofi-themes-collection)
+(squared corners, Material Darker palette, red accent), shipped in the `rofi`
+package:
+
+- `rofi/.config/rofi/config.rasi` — rofi's behaviour + `@theme` line
+- `rofi/.config/rofi/themes/squared-material-red.rasi` — the theme itself
+
+Try it by hand: `rofi -show drun`, `rofi -show window`.
+
+## Notifications
+
+`mako` draws **small, compact cards** in the top-right corner, tucked right up
+under the bar (a 4px margin), and they **fade after ~3s** (2s for low urgency).
+Critical notifications stay until dismissed. The same compact look is used by
+the `now-playing` fallback popup.
+
 ## Status bar
+
+The bar is deliberately **compact and icon-led**: a workspace pill on the left,
+the focused window next to it, the scrolling track name + clock in the middle,
+and a tidy group of coloured icon modules on the right (tray, audio, network,
+CPU, memory) separated by hair-thin dividers.
 
 Two custom modules replace waybar's built-ins, because neither can animate:
 
-- **`custom/workspaces`** (`~/.local/bin/niri-workspaces`) shows a **dot for
-  every workspace that has windows**, plus the **name of the one you are on**,
-  kept short (at most 12 characters, e.g. `● ● web`). Empty named workspaces
-  are hidden. The dots are not individually clickable — use `Mod+1..9` /
-  `Mod+0` to switch.
+- **`custom/workspaces`** (`~/.local/bin/ws-indicator`) shows a **dim dot for
+  every workspace that has windows**, and draws the workspace you are on as a
+  **filled "tab"** pill. Names are trimmed to at most 12 characters (e.g.
+  `● web`). Empty workspaces are hidden. The dots are not individually
+  clickable — use `Mod+1..9` / `Mod+0` to switch.
 - **`custom/nowplaying`** (`~/.local/bin/now-playing-bar`) is the scrolling
   track readout described above.
+
+> The indicator used to be called `niri-workspaces`, which made `niri` + `<Tab>`
+> in the shell complete to a confusing third entry. It is now `ws-indicator`.
 
 ## Daily use
 
@@ -174,7 +204,8 @@ works but is meant for nested/testing use.
 | Keys              | Action                        |
 | ----------------- | ----------------------------- |
 | `Mod+Return`/`T`  | Terminal (kitty)              |
-| `Mod+D`           | App launcher (fuzzel)         |
+| `Mod+D`           | App launcher (rofi)           |
+| `Mod+Tab`         | Window switcher (rofi)        |
 | `Mod+E`           | File manager (thunar)         |
 | `Mod+Q`           | Close window                  |
 | `Mod+O`           | Overview                      |

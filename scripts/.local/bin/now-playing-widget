@@ -84,19 +84,19 @@ MARQUEE_PX = 104        # width of the scrolling title window (~12 monospace cha
 MARQUEE_STEP = 1        # pixels moved per tick
 MARQUEE_MS = 60         # ms between marquee ticks
 EQ_MS = 130             # ms between equalizer frames
-TOP_MARGIN = 48         # gap below the top of the screen (clears the bar)
+TOP_MARGIN = 4          # gap below the bar (niri adds the bar's exclusive zone)
 
 CSS = """
 .np-card {
     background: #1e1e2e;
     border: 2px solid #cba6f7;
-    border-radius: 14px;
-    padding: 8px 14px;
+    border-radius: 12px;
+    padding: 5px 12px;
     font-family: "JetBrainsMono Nerd Font", monospace;
 }
-.np-title { color: #cba6f7; font-weight: 700; font-size: 14px; }
-.np-sub   { color: #a6adc8; font-size: 11px; }
-.np-eq    { color: #cba6f7; font-size: 15px; }
+.np-title { color: #cba6f7; font-weight: 700; font-size: 13px; }
+.np-sub   { color: #a6adc8; font-size: 10px; }
+.np-eq    { color: #cba6f7; font-size: 14px; }
 .np-scroll scrollbar { min-width: 0; min-height: 0; opacity: 0; }
 .np-btn {
     background: none;
@@ -281,8 +281,8 @@ def main():
     ap.add_argument("--title", default="")
     ap.add_argument("--artist", default="")
     ap.add_argument("--album", default="")
-    ap.add_argument("--timeout", type=float, default=8.0,
-                    help="seconds to stay on screen (default 8)")
+    ap.add_argument("--timeout", type=float, default=4.0,
+                    help="seconds to stay on screen (default 4)")
     args = ap.parse_args()
     Popup(args.title, args.artist, args.album, args.timeout).run(
         ["now-playing-widget"]

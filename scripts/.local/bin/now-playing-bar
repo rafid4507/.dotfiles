@@ -13,7 +13,7 @@
 # ============================================================================
 set -u
 
-WIDTH=30                 # visible characters of the marquee window
+WIDTH=12                 # visible characters of the marquee window (short!)
 GAP='   '                # gap between repeats of the title
 DELAY=0.15               # seconds between frames (~6.7 fps)
 

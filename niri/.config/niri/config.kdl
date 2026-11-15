@@ -209,7 +209,10 @@ binds {
     // Launch programs --------------------------------------------------------
     Mod+Return { spawn "kitty"; }
     Mod+T      { spawn "kitty"; }
-    Mod+D      { spawn "fuzzel"; }
+    // Application launcher (rofi, themed by the "rofi" package).
+    Mod+D      { spawn "rofi" "-show" "drun"; }
+    // Window switcher (same theme).
+    Mod+Tab    { spawn "rofi" "-show" "window"; }
     Mod+E      { spawn "thunar"; }
 
     // Session ----------------------------------------------------------------
@@ -228,8 +231,8 @@ binds {
     // Region -> copy straight to clipboard:
     Mod+Print   { spawn-sh "grim -g \"$(slurp)\" - | wl-copy && notify-send -a niri 'Screenshot' 'Region copied to clipboard'"; }
 
-    // Clipboard history (cliphist + fuzzel) ----------------------------------
-    Mod+Alt+V { spawn-sh "cliphist list | fuzzel --dmenu --prompt 'clipboard> ' | cliphist decode | wl-copy"; }
+    // Clipboard history (cliphist + rofi dmenu) ----------------------------
+    Mod+Alt+V { spawn-sh "cliphist list | rofi -dmenu -p 'clipboard>' | cliphist decode | wl-copy"; }
 
     // Notifications ----------------------------------------------------------
     Mod+Shift+D { spawn "makoctl" "dismiss" "--all"; }

@@ -1,10 +1,11 @@
-/* waybar — Catppuccin Mocha
- * Floating "pill" look: the bar background is transparent and each module
- * group gets its own rounded background. */
+/* waybar — Catppuccin Mocha, compact "pill" bar
+ * The bar background is transparent; each of the three groups is its own
+ * rounded pill. Modules are icon-led and tightly spaced so the whole bar
+ * stays short and tidy. */
 
 * {
     font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     border: none;
     border-radius: 0;
@@ -21,60 +22,69 @@ window#waybar {
 .modules-center,
 .modules-right {
     background: #1e1e2e;
-    border-radius: 12px;
-    padding: 0 10px;
+    border-radius: 10px;
+    padding: 0 8px;
     margin: 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 /* ── workspace indicator (custom/workspaces) ──────────────────────────────── */
-/* A dot per workspace that has windows, plus the name of the current one.
- * Kept a touch smaller than the rest of the bar. */
+/* The current workspace is a filled "tab" (drawn with pango markup by
+ * ~/.local/bin/ws-indicator); the rest are small dim dots. */
 #custom-workspaces {
     font-size: 12px;
-    padding: 0 8px;
+    padding: 0 6px;
 }
 
 /* ── focused window title ─────────────────────────────────────────────────── */
 #window {
     color: #bac2de;
     padding: 0 6px;
+    margin-left: 2px;
 }
 
-/* ── modules ──────────────────────────────────────────────────────────────── */
+/* ── centre: now playing + clock ──────────────────────────────────────────── */
+#custom-nowplaying {
+    color: #cba6f7;
+    padding: 0 8px;
+}
 #clock {
     color: #89b4fa;
     padding: 0 6px;
 }
-#custom-nowplaying {
-    color: #cba6f7;
-    padding: 0 10px;
-}
+
+/* ── right group ──────────────────────────────────────────────────────────── */
+/* Thin separators + a subtle hover highlight make the group read as a set. */
 #tray {
     padding: 0 6px;
 }
 #tray > .passive {
     -gtk-icon-effect: dim;
 }
-#pulseaudio {
-    color: #a6e3a1;
-    padding: 0 8px;
-}
-#pulseaudio.muted {
-    color: #f38ba8;
-}
-#network {
-    color: #89dceb;
-    padding: 0 8px;
-}
-#network.disconnected {
-    color: #f38ba8;
-}
-#cpu {
-    color: #f9e2af;
-    padding: 0 8px;
-}
+
+#pulseaudio,
+#network,
+#cpu,
 #memory {
-    color: #fab387;
-    padding: 0 8px;
+    padding: 0 9px;
+    margin: 2px 0;
+    border-left: 1px solid #313244;
+    border-radius: 0;
+}
+
+#pulseaudio { color: #a6e3a1; }
+#pulseaudio.muted { color: #f38ba8; }
+
+#network { color: #89dceb; }
+#network.disconnected { color: #f38ba8; }
+
+#cpu { color: #f9e2af; }
+#memory { color: #fab387; }
+
+#pulseaudio:hover,
+#network:hover,
+#cpu:hover,
+#memory:hover {
+    background: #313244;
+    border-radius: 6px;
 }

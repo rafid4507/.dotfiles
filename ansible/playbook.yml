@@ -35,6 +35,7 @@
       - base-devel
       # Bar, launcher, notifications, lock/idle, wallpaper
       - waybar
+      - rofi
       - fuzzel
       - mako
       - swaybg
