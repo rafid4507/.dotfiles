@@ -3,7 +3,7 @@
 #  now-playing — "now playing" popup
 #
 #  Watches the active MPRIS player (via playerctld) with playerctl and, every
-#  time a new track starts playing, pops up a card with the cover art, the
+#  time a new track starts playing, pops up a card with playback controls, the
 #  track name (scrolling) and the artist.
 #
 #  It uses the small animated GTK4 + gtk4-layer-shell widget
@@ -11,6 +11,9 @@
 #  back to a plain mako notification (styled by mako's [app-name=now-playing]
 #  criteria). So it works out of the box and gets prettier once the optional
 #  packages are present.
+#
+#  The player's cover art is deliberately NOT shown: players such as
+#  Chromium/YouTube Music usually report an app or site logo there.
 #
 #  Started by niri (see niri/.config/niri/config.kdl). It is safe to leave
 #  running forever: when no player is around it simply waits and retries.
@@ -22,12 +25,6 @@ set -u
 APP_NAME="now-playing"
 STACK_TAG="now-playing"          # mako replaces the previous popup (x-dunst-stack-tag)
 SEP=$'\x1f'                      # unit separator — our playerctl field delimiter
-
-CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/now-playing"
-mkdir -p "$CACHE"
-
-# Drop cover art we have not used in a week so the cache cannot grow forever.
-find "$CACHE" -type f -mtime +7 -delete 2>/dev/null || true
 
 # The animated popup lives next to this script. Resolve the Stow symlink so we
 # find the real file in the repo (works whether run from ~/.local/bin or not).
@@ -45,72 +42,29 @@ from gi.repository import Gtk, Gtk4LayerShell
     use_widget=1
 fi
 
-# status, title, artist, album — joined by the unit separator. (The artwork URL
-# is fetched separately: players publish it a moment after the title.)
+# status, title, artist, album — joined by the unit separator.
 FMT="{{status}}${SEP}{{title}}${SEP}{{artist}}${SEP}{{album}}"
 
 last_key=""
 widget_pid=""
 
-# Players (Chromium in particular) report the new title a moment before the new
-# artwork URL, so poll for it briefly instead of trusting the first event.
-art_url() {
-    local url i
-    for i in 1 2 3 4 5 6 7 8; do
-        url="$(playerctl -p playerctld metadata mpris:artUrl 2>/dev/null)"
-        [[ -n "$url" ]] && { printf '%s' "$url"; return 0; }
-        sleep 0.2
-    done
-    return 1
-}
-
-# Download/copy the artwork into the cache and echo the local path (or nothing).
-resolve_art() {
-    local arturl="$1" src="" ext name dest
-    [[ -n "$arturl" ]] || return 0
-    case "$arturl" in
-        file://*)           src="${arturl#file://}" ;;
-        http://*|https://*) src="$arturl" ;;
-        *) return 0 ;;
-    esac
-    ext="${src##*.}"; ext="${ext%%\?*}"
-    case "$ext" in
-        png|jpg|jpeg|webp|gif|bmp) ;;
-        *) ext=png ;;
-    esac
-    name="$(printf '%s' "$arturl" | sha1sum | cut -c1-16)"
-    dest="$CACHE/$name.$ext"
-    if [[ ! -s "$dest" ]]; then
-        if [[ -f "$src" ]]; then
-            cp -f -- "$src" "$dest" 2>/dev/null || dest=""
-        else
-            curl -fsSL --max-time 10 -- "$arturl" -o "$dest" 2>/dev/null \
-                || { rm -f -- "$dest"; dest=""; }
-        fi
-    fi
-    [[ -s "$dest" ]] && printf '%s' "$dest"
-}
-
 # Show the popup: the animated widget when available, else a mako notification.
 popup() {
-    local title="$1" artist="$2" album="$3" icon="$4"
+    local title="$1" artist="$2" album="$3"
 
     if (( use_widget )); then
         # One card at a time: drop the previous one before showing the new one.
         [[ -n "$widget_pid" ]] && kill "$widget_pid" 2>/dev/null
-        local wargs=()
-        [[ -n "$icon" ]] && wargs+=(--art "$icon")
         setsid "$WIDGET" --title "$title" --artist "$artist" --album "$album" \
-            "${wargs[@]}" >/dev/null 2>&1 &
+            >/dev/null 2>&1 &
         widget_pid=$!
         return 0
     fi
 
     local body="$artist"
     [[ -n "$album" ]] && body="${body:+$body — }$album"
-    local args=(-a "$APP_NAME" -t 6000 -h "string:x-dunst-stack-tag:$STACK_TAG")
-    [[ -n "$icon" ]] && args+=(-i "$icon")
-    notify-send "${args[@]}" "$title" "$body"
+    notify-send -a "$APP_NAME" -t 6000 -h "string:x-dunst-stack-tag:$STACK_TAG" \
+        "$title" "$body"
 }
 
 notify_track() {
@@ -127,12 +81,8 @@ notify_track() {
     [[ "$key" == "$last_key" ]] && return 0
     last_key="$key"
 
-    local arturl icon
-    arturl="$(art_url)" || arturl=""
-    icon="$(resolve_art "$arturl")"
-
     [[ -n "$title" ]] || title="Now playing"
-    popup "$title" "$artist" "$album" "$icon"
+    popup "$title" "$artist" "$album"
 }
 
 # Follow the active player. When playerctld is not up (yet) playerctl exits at

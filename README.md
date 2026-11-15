@@ -87,9 +87,13 @@ yay -S pear-desktop-bin
 ## Now playing
 
 When a track starts, a small **animated card** appears near the top of the
-screen: a tiny cover, the track name **scrolling right-to-left**, the artist,
-and a little **animated equalizer**. There is no duration/seek bar on purpose —
-the animation is what tells you it is actually playing.
+screen and **auto-hides after a few seconds** (it stays put while the pointer is
+over it). Instead of cover art — which players such as Chromium/YouTube Music
+usually fill with an app or site logo — it shows **small playback buttons**
+(previous / play-pause / next), the track name in a **short scrolling window**
+(about 12 characters at a time), the artist, and a little **animated
+equalizer**. There is no duration/seek bar on purpose — the animation is what
+tells you it is actually playing.
 
 The same scrolling name + equalizer also live in the centre of the bar.
 
@@ -98,7 +102,8 @@ The same scrolling name + equalizer also live in the centre of the bar.
   and, on every track change, launches the popup widget.
 - **`scripts` → `~/.local/bin/now-playing-widget`** *is* the popup: a tiny GTK4
   + [`gtk4-layer-shell`](https://github.com/wmww/gtk4-layer-shell) card anchored
-  at the top-centre. It auto-hides after a few seconds.
+  at the top-centre. The playback buttons drive `playerctl`; the name scrolls
+  through a ~12-character window. It auto-hides after a few seconds.
 - **`scripts` → `~/.local/bin/now-playing-bar`** drives the bar readout: the
   `custom/nowplaying` waybar module streams one animation frame per line. Click
   it to play/pause, right-click for next, middle-click for previous.
@@ -122,9 +127,10 @@ the feature keeps working either way.
 Two custom modules replace waybar's built-ins, because neither can animate:
 
 - **`custom/workspaces`** (`~/.local/bin/niri-workspaces`) shows a **dot for
-  every workspace that has windows**, plus the **name of the one you are on**
-  (e.g. `● ● web`). Empty named workspaces are hidden. The dots are not
-  individually clickable — use `Mod+1..9` / `Mod+0` to switch.
+  every workspace that has windows**, plus the **name of the one you are on**,
+  kept short (at most 12 characters, e.g. `● ● web`). Empty named workspaces
+  are hidden. The dots are not individually clickable — use `Mod+1..9` /
+  `Mod+0` to switch.
 - **`custom/nowplaying`** (`~/.local/bin/now-playing-bar`) is the scrolling
   track readout described above.
 

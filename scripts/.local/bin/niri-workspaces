@@ -25,7 +25,8 @@ jq -nr --argjson ws "$ws" --argjson win "$win" '
      | from_entries) as $counts
     | ($ws | sort_by(.idx))
     | map(
-        (.name // (.idx | tostring)) as $label
+        # Keep the label short: at most 12 characters.
+        ((.name // (.idx | tostring))[0:12]) as $label
         | if .is_focused then
             "<span foreground=\"#cba6f7\" weight=\"bold\">\($label)</span>"
           elif (($counts[(.id | tostring)] // 0) > 0) then

@@ -28,15 +28,13 @@ default-timeout=0
 
 # ── "Now playing" popup (fallback, sent by ~/.local/bin/now-playing) ─────────
 # Only used when the animated GTK4 widget (now-playing-widget) is unavailable,
-# i.e. when python-gobject / gtk4-layer-shell are not installed. A compact
-# horizontal card: small cover on the left, title + artist on the right.
+# i.e. when python-gobject / gtk4-layer-shell are not installed. A compact card
+# with just the track name and artist — no cover art, because players often
+# report an app/site logo there.
 [app-name=now-playing]
 anchor=top-center
 default-timeout=6000
-width=340
-height=96
+width=300
+height=72
 padding=12
-max-icon-size=56
-icon-location=left
-icon-border-radius=8
 border-color=#cba6f7

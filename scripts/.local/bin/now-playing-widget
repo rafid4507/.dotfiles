@@ -5,11 +5,15 @@
 #  A tiny GTK4 + gtk4-layer-shell card that appears near the top of the screen
 #  for a few seconds whenever a new track starts:
 #
-#      [ cover ]  Track name scrolling right-to-left
-#                 ▂▄▅▃  Artist — Album
+#      ⏮  ⏸  ⏭   Track name scrolls (12 chars at a time)
+#                  Artist — Album
 #
-#  The little "equalizer" animates so you can tell at a glance that audio is
-#  actually playing (there is deliberately no duration/seek bar).
+#  - Small playback buttons (previous / play-pause / next) instead of the
+#    player's cover art — players such as Chromium/YouTube Music often report
+#    an app or site logo there, which is noise.
+#  - The name scrolls right-to-left in a short window; there is deliberately no
+#    duration/seek bar. A little animated equalizer shows that audio is playing.
+#  - Auto-hides after a few seconds, but stays put while the pointer is over it.
 #
 #  It is launched per track by scripts/.local/bin/now-playing, which falls back
 #  to a plain (static) mako notification when the GTK4/layer-shell bindings are
@@ -18,8 +22,48 @@
 #  Requires: python-gobject, gtk4-layer-shell   (both in Arch's 'extra')
 # ============================================================================
 import argparse
+import ctypes.util
+import glob
 import os
 import sys
+
+
+def _find_layer_shell_lib():
+    """Locate libgtk4-layer-shell (needed for the LD_PRELOAD workaround)."""
+    for pattern in ("/usr/lib/libgtk4-layer-shell.so*",
+                    "/usr/lib64/libgtk4-layer-shell.so*",
+                    "/usr/local/lib/libgtk4-layer-shell.so*"):
+        hits = sorted(glob.glob(pattern))
+        if hits:
+            return hits[0]
+    return ctypes.util.find_library("gtk4-layer-shell")
+
+
+def _ensure_preload():
+    """Re-exec with LD_PRELOAD set so gtk4-layer-shell initialises correctly.
+
+    Loaded through GObject introspection, gtk4-layer-shell usually ends up
+    linked *after* libwayland-client and layer surfaces then silently fail to
+    initialise. Preloading the library fixes the load order. See
+    https://github.com/wmww/gtk4-layer-shell/blob/main/linking.md
+    """
+    if os.environ.get("_NP_PRELOADED") == "1":
+        return
+    if "libgtk4-layer-shell" in os.environ.get("LD_PRELOAD", ""):
+        os.environ["_NP_PRELOADED"] = "1"
+        return
+    lib = _find_layer_shell_lib()
+    if not lib:
+        return
+    env = dict(os.environ)
+    env["LD_PRELOAD"] = (lib + " " + env.get("LD_PRELOAD", "")).strip()
+    env["_NP_PRELOADED"] = "1"
+    os.execve(sys.executable,
+              [sys.executable, os.path.realpath(__file__), *sys.argv[1:]],
+              env)
+
+
+_ensure_preload()
 
 try:
     import gi
@@ -36,7 +80,7 @@ except Exception as exc:  # depends on the host, so fail softly
 
 
 EQ_FRAMES = ("▁▂▃▄", "▂▄▅▃", "▃▅▆▄", "▄▃▂▁", "▃▂▁▂", "▂▁▂▃")
-MARQUEE_PX = 220        # width of the scrolling title window (pixels)
+MARQUEE_PX = 104        # width of the scrolling title window (~12 monospace chars)
 MARQUEE_STEP = 1        # pixels moved per tick
 MARQUEE_MS = 60         # ms between marquee ticks
 EQ_MS = 130             # ms between equalizer frames
@@ -54,6 +98,17 @@ CSS = """
 .np-sub   { color: #a6adc8; font-size: 11px; }
 .np-eq    { color: #cba6f7; font-size: 15px; }
 .np-scroll scrollbar { min-width: 0; min-height: 0; opacity: 0; }
+.np-btn {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0 2px;
+    min-width: 0;
+    min-height: 0;
+    color: #cba6f7;
+}
+.np-btn:hover { color: #f5c2e7; }
+.np-btn:active { color: #89b4fa; }
 """
 
 
@@ -66,7 +121,7 @@ def _load_css(provider):
 
 
 class Popup(Gtk.Application):
-    def __init__(self, title, artist, album, art, timeout):
+    def __init__(self, title, artist, album, timeout):
         # NON_UNIQUE: one process per track, so a new popup never wakes an old
         # instance (which would leave the stale card on screen).
         super().__init__(application_id=None,
@@ -74,10 +129,22 @@ class Popup(Gtk.Application):
         self._title = title or "Now playing"
         self._artist = artist
         self._album = album
-        self._art = art
         self._timeout = timeout
         self._eq = 0
+        self._playing = True
+        self._hover = False
         self._shown = False
+
+    # ── small, text-styled icon buttons ─────────────────────────────────────
+    def _icon_button(self, icon, tip, cmd):
+        btn = Gtk.Button()
+        btn.add_css_class("np-btn")
+        btn.set_tooltip_text(tip)
+        img = Gtk.Image.new_from_icon_name(icon)
+        img.set_pixel_size(16)
+        btn.set_child(img)
+        btn.connect("clicked", lambda *_: GLib.spawn_command_line_async(cmd))
+        return btn, img
 
     def do_activate(self):
         if self._shown:
@@ -87,8 +154,7 @@ class Popup(Gtk.Application):
         win = Gtk.ApplicationWindow(application=self)
         win.set_decorated(False)
 
-        # Turn the plain window into a floating, click-through, top-centred
-        # layer-shell surface.
+        # Turn the plain window into a floating, top-centred layer-shell surface.
         LayerShell.init_for_window(win)
         LayerShell.set_layer(win, LayerShell.Layer.OVERLAY)
         LayerShell.set_anchor(win, LayerShell.Edge.TOP, True)  # TOP only => centred
@@ -101,37 +167,56 @@ class Popup(Gtk.Application):
             win.get_display(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        card = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        card = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         card.add_css_class("np-card")
 
-        # ── cover art ───────────────────────────────────────────────────────
-        if self._art and os.path.isfile(self._art):
-            pic = Gtk.Picture.new_for_filename(self._art)
-            pic.set_content_fit(Gtk.ContentFit.COVER)
-            pic.set_size_request(52, 52)
-            card.append(pic)
+        # ── playback controls ───────────────────────────────────────────────
+        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        controls.set_valign(Gtk.Align.CENTER)
+        prev_btn, _ = self._icon_button(
+            "media-skip-backward-symbolic", "Previous", "playerctl previous")
+        play_btn, play_img = self._icon_button(
+            "media-playback-pause-symbolic", "Play / pause", "playerctl play-pause")
+        next_btn, _ = self._icon_button(
+            "media-skip-forward-symbolic", "Next", "playerctl next")
+        for b in (prev_btn, play_btn, next_btn):
+            controls.append(b)
 
-        # ── text column ─────────────────────────────────────────────────────
+        def on_play(_btn):
+            GLib.spawn_command_line_async("playerctl play-pause")
+            self._playing = not self._playing
+            play_img.set_from_icon_name(
+                "media-playback-pause-symbolic" if self._playing
+                else "media-playback-start-symbolic")
+
+        play_btn.connect("clicked", on_play)
+        card.append(controls)
+
+        # ── animated "playing" cue ──────────────────────────────────────────
+        eq = Gtk.Label(label=EQ_FRAMES[0])
+        eq.add_css_class("np-eq")
+        eq.set_valign(Gtk.Align.CENTER)
+        card.append(eq)
+
+        # ── text column (fixed, short width) ────────────────────────────────
         col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         col.set_valign(Gtk.Align.CENTER)
         col.set_size_request(MARQUEE_PX, -1)
 
-        # Title in a scrolled window: when it is wider than the window it slides
-        # right-to-left (the scrollbar itself is hidden via CSS).
+        # Title in a short scrolled window: it slides right-to-left when wider
+        # than the window (the scrollbar itself is hidden via CSS).
         scroll = Gtk.ScrolledWindow()
         scroll.add_css_class("np-scroll")
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
+        # Keep the viewport at MARQUEE_PX wide instead of growing to fit the
+        # whole title — that is what makes it a short, scrolling window.
+        scroll.set_propagate_natural_width(False)
+        scroll.set_size_request(MARQUEE_PX, -1)
         title = Gtk.Label(label=self._title)
         title.add_css_class("np-title")
         title.set_xalign(0.0)
         scroll.set_child(title)
         col.append(scroll)
-
-        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        eq = Gtk.Label(label=EQ_FRAMES[0])
-        eq.add_css_class("np-eq")
-        eq.set_valign(Gtk.Align.CENTER)
-        row.append(eq)
 
         sub_text = self._artist
         if self._album:
@@ -140,10 +225,9 @@ class Popup(Gtk.Application):
             sub = Gtk.Label(label=sub_text)
             sub.add_css_class("np-sub")
             sub.set_xalign(0.0)
+            sub.set_max_width_chars(12)
             sub.set_ellipsize(Pango.EllipsizeMode.END)
-            sub.set_hexpand(True)
-            row.append(sub)
-        col.append(row)
+            col.append(sub)
 
         card.append(col)
         win.set_child(card)
@@ -167,8 +251,22 @@ class Popup(Gtk.Application):
 
         GLib.timeout_add(EQ_MS, equalize)
 
-        # ── auto-hide ───────────────────────────────────────────────────────
+        # ── auto-hide (paused while the pointer is over the card) ───────────
+        motion = Gtk.EventControllerMotion()
+
+        def enter(*_a):
+            self._hover = True
+
+        def leave(*_a):
+            self._hover = False
+
+        motion.connect("enter", enter)
+        motion.connect("leave", leave)
+        win.add_controller(motion)
+
         def bye():
+            if self._hover:
+                return True
             win.destroy()
             self.quit()
             return False
@@ -183,11 +281,10 @@ def main():
     ap.add_argument("--title", default="")
     ap.add_argument("--artist", default="")
     ap.add_argument("--album", default="")
-    ap.add_argument("--art", default="", help="path to a local cover image")
     ap.add_argument("--timeout", type=float, default=8.0,
                     help="seconds to stay on screen (default 8)")
     args = ap.parse_args()
-    Popup(args.title, args.artist, args.album, args.art, args.timeout).run(
+    Popup(args.title, args.artist, args.album, args.timeout).run(
         ["now-playing-widget"]
     )
 
