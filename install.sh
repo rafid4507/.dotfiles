@@ -7,9 +7,10 @@ SYS_BACKUP="/etc/dotfiles-backup/$STAMP"
 USER_BACKUP="$HOME/.dotfiles-backup/$STAMP"
 
 usage() {
-  echo "Usage: $0 [--system]"
-  echo "  (no args)  link user dotfiles from home/ into \$HOME"
-  echo "  --system   copy system/ files into /etc (needs sudo)"
+  echo "Usage: $0 [--system [--grub]]"
+  echo "  (no args)        link user dotfiles from home/ into \$HOME"
+  echo "  --system         copy system/ files into /etc (needs sudo)"
+  echo "  --system --grub  also install /etc/default/grub (machine-specific)"
 }
 
 link_user() {
@@ -39,6 +40,8 @@ link_user() {
 }
 
 install_system() {
+  local with_grub="${1:-}"
+
   if [ "$(id -u)" -ne 0 ]; then
     echo "Run with sudo: sudo $0 --system" >&2
     exit 1
@@ -48,6 +51,13 @@ install_system() {
   while IFS= read -r -d '' src; do
     rel="${src#"$REPO/system/"}"
     dest="/$rel"
+
+    # /etc/default/grub contains machine-specific resume UUIDs.
+    if [ "$rel" = "etc/default/grub" ] && [ "$with_grub" != "--grub" ]; then
+      echo "  skipped $dest (use --system --grub to apply)"
+      continue
+    fi
+
     mkdir -p "$(dirname "$dest")"
 
     if [ -e "$dest" ]; then
@@ -59,9 +69,11 @@ install_system() {
     echo "  installed $dest"
   done < <(find "$REPO/system" -type f -print0)
 
-  echo "==> Regenerating GRUB config"
-  if command -v grub-mkconfig >/dev/null 2>&1; then
-    grub-mkconfig -o /boot/grub/grub.cfg
+  if [ "$with_grub" = "--grub" ]; then
+    echo "==> Regenerating GRUB config"
+    if command -v grub-mkconfig >/dev/null 2>&1; then
+      grub-mkconfig -o /boot/grub/grub.cfg
+    fi
   fi
 
   echo "==> Rebuilding initramfs (hid_apple options)"
@@ -77,7 +89,7 @@ install_system() {
 
 case "${1:-}" in
   --system)
-    install_system
+    install_system "${2:-}"
     ;;
   ""|--user)
     link_user

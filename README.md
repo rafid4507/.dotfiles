@@ -40,6 +40,12 @@ sudo ./install.sh --system
 
 It backs up the old files to `/etc/dotfiles-backup/<timestamp>/`, copies `system/etc/*` into place, rebuilds the initramfs (for `hid_apple`), and sets up the SDDM Breeze theme with a blurred login wallpaper.
 
+`/etc/default/grub` is skipped by default because it contains a machine-specific `resume=UUID`. Apply it explicitly on the same machine with:
+
+```bash
+sudo ./install.sh --system --grub
+```
+
 You can also run just the system fixes:
 
 ```bash
