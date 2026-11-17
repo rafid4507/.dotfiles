@@ -95,6 +95,27 @@ for conf in /etc/sddm.conf.d/kde_settings.conf /etc/sddm.conf.d/10-endeavouros.c
   fi
 done
 
+# Keep the KDE lock screen (Meta+L) on the same wallpaper as the desktop.
+if [ -n "${SUDO_USER:-}" ]; then
+  user_home=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+  if [ -n "$user_home" ] && [ -d "$user_home/.config" ]; then
+    lockconf="$user_home/.config/kscreenlockerrc"
+    if [ -f "$lockconf" ]; then
+      cp -a "$lockconf" "$lockconf.bak.$STAMP"
+    fi
+    cat > "$lockconf" <<EOF
+[Greeter]
+WallpaperPlugin=org.kde.image
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file://$SRC
+FillMode=2
+EOF
+    chown "$SUDO_USER:$SUDO_USER" "$lockconf"
+    echo "==> Lock screen wallpaper: $SRC"
+  fi
+fi
+
 echo
 echo "==> Active SDDM themes:"
 grep -H '^Current=' /etc/sddm.conf.d/*.conf || true

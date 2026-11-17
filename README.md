@@ -16,6 +16,9 @@ Keyboard shortcuts are in:
 Plasma panel/wallpaper layout is in:
 - `home/.config/plasma-org.kde.plasma.desktop-appletsrc`
 
+The **lock screen** (Meta+L) wallpaper is separate from SDDM and is in:
+- `home/.config/kscreenlockerrc`
+
 Keyboard layout is German (DE) only:
 - `home/.config/kxkbrc`
 - `system/etc/X11/xorg.conf.d/00-keyboard.conf`

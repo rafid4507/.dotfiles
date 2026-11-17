@@ -10,6 +10,7 @@ HOME_FILES=(
   .config/kxkbrc .config/kcminputrc .config/kdeglobals
   .config/kglobalshortcutsrc .config/kwinrc .config/kwinoutputconfig.json
   .config/ksplashrc .config/ksmserverrc .config/konsolerc
+  .config/kscreenlockerrc
   .config/dolphinrc .config/katerc .config/mimeapps.list
   .config/plasma-localerc .config/plasmanotifyrc .config/plasmarc
   .config/plasmashellrc .config/plasma-org.kde.plasma.desktop-appletsrc
