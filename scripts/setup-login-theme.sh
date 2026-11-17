@@ -28,6 +28,7 @@ fi
 if [ -n "${1:-}" ]; then
   SRC="$1"
 fi
+SRC="${SRC#file://}"
 
 DESTDIR=/usr/local/share/sddm/wallpapers
 DEST=$DESTDIR/rafid-blur.jpg
