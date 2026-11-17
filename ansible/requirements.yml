@@ -1,6 +1,0 @@
----
-# Ansible collections this playbook needs.
-# Install with:  ansible-galaxy collection install -r requirements.yml
-collections:
-  - name: community.general   # the `pacman` module
-  - name: kewlfft.aur         # the `aur` module (build/install AUR packages)

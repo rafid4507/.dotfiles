@@ -1,29 +1,35 @@
 #!/usr/bin/env bash
-# ============================================================================
-#  bootstrap.sh — set up a fresh Arch machine from this repo in one command
-#
-#  Usage (after cloning this repo to ~/.dotfiles):
-#      cd ~/.dotfiles && ./bootstrap.sh
-#
-#  It installs Ansible, then runs the playbook, which installs every package,
-#  enables the services, deploys the dotfiles with GNU Stow, and sets fish as
-#  your login shell.
-#
-#  NOTE: cloning this repo needs GitHub access. On a brand-new machine, add an
-#  SSH key to GitHub first (see README.md), or clone over HTTPS with a token.
-# ============================================================================
 set -euo pipefail
-cd "$(dirname "$0")"
 
-echo "==> Installing Ansible (needs sudo)..."
-sudo pacman -S --needed --noconfirm ansible python-packaging
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES="$REPO/packages/pacman-explicit.txt"
 
-echo "==> Installing Ansible collections..."
-cd ansible
-ansible-galaxy collection install -r requirements.yml
+usage() {
+  echo "Usage: $0 [--all]"
+  echo "  (no args)  install packages from packages/pacman-explicit.txt"
+  echo "  --all      install packages and link user dotfiles"
+}
 
-echo "==> Running the playbook (enter your sudo password when prompted)..."
-ansible-playbook playbook.yml --ask-become-pass
+if [ ! -f "$PACKAGES" ]; then
+  echo "Missing $PACKAGES" >&2
+  exit 1
+fi
 
-echo
-echo "==> Done! Log out and back in, then start niri with:  niri-session"
+echo "==> Installing packages (pacman)"
+sudo pacman -S --needed - < "$PACKAGES"
+
+if [ -s "$REPO/packages/aur-foreign.txt" ]; then
+  echo "==> Installing AUR packages"
+  if command -v yay >/dev/null 2>&1; then
+    yay -S --needed - < "$REPO/packages/aur-foreign.txt"
+  else
+    echo "yay not found; install yay then run:" >&2
+    echo "  yay -S --needed - < $REPO/packages/aur-foreign.txt" >&2
+  fi
+fi
+
+if [ "${1:-}" = "--all" ]; then
+  "$REPO/install.sh"
+  echo
+  echo "System files still need: sudo $REPO/install.sh --system"
+fi

@@ -1,0 +1,41 @@
+[user]
+	name = Rafid
+	email = rafid4507@users.noreply.github.com
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = vim
+	pager = less -FRX
+	autocrlf = input
+	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[pull]
+	rebase = false
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[fetch]
+	prune = true
+
+[rebase]
+	autosquash = true
+
+[color]
+	ui = auto
+
+[alias]
+	st = status -sb
+	co = checkout
+	br = branch
+	ci = commit
+	lg = log --oneline --graph --decorate --all
+	last = log -1 HEAD --stat
+	unstage = reset HEAD --
+	amend = commit --amend --no-edit
+	df = diff
+	dc = diff --cached
+	root = rev-parse --show-toplevel
