@@ -122,7 +122,8 @@ sudo pacman -S --needed - < packages/pacman-explicit.txt
 ## Fixes kept here
 
 - `scripts/fix-keyboard.sh` – Fn/left-Ctrl swap + Alt/Win (Option/Command) swap for T2 Mac, rebuild initramfs.
-- `scripts/setup-login-theme.sh` – stable Qt6 Breeze SDDM theme + blurred login wallpaper.
+- `scripts/setup-login-theme.sh` – stable Qt6 Breeze SDDM theme + blurred login wallpaper. It uses the current Plasma wallpaper by default; pass an image path to override:
+  `sudo bash scripts/setup-login-theme.sh /path/to/wallpaper.jpg`
 
 ## Notes
 

@@ -13,6 +13,22 @@ SRC=/usr/share/wallpapers/EndeavourOS/contents/vadim.jpg
 [ -f "$SRC" ] || SRC=/usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
 [ -f "$SRC" ] || SRC=/usr/share/wallpapers/Next/contents/images/5120x2880.png
 
+# Prefer the wallpaper from the invoking user's Plasma config, if available.
+if [ -z "${1:-}" ] && [ -n "${SUDO_USER:-}" ]; then
+  cfg="/home/$SUDO_USER/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  if [ -f "$cfg" ]; then
+    candidate=$(sed -n 's|^Image=file://||p' "$cfg" | tail -n1)
+    if [ -n "$candidate" ] && [ -f "$candidate" ]; then
+      SRC="$candidate"
+    fi
+  fi
+fi
+
+# Optional first argument overrides the wallpaper.
+if [ -n "${1:-}" ]; then
+  SRC="$1"
+fi
+
 DESTDIR=/usr/local/share/sddm/wallpapers
 DEST=$DESTDIR/rafid-blur.jpg
 mkdir -p "$DESTDIR"
