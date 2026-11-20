@@ -1,0 +1,25 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=sukuna.tail66a175.ts.net
+      - N8N_PROTOCOL=https
+      - N8N_PORT=5678
+      - N8N_PATH=/n8n/
+      - N8N_EDITOR_BASE_URL=https://sukuna.tail66a175.ts.net/n8n/
+      - WEBHOOK_URL=https://sukuna.tail66a175.ts.net/n8n/
+      - N8N_PUSH_BACKEND=sse
+      - N8N_PROXY_HOPS=1
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=Europe/Berlin
+      - TZ=Europe/Berlin
+      - N8N_DIAGNOSTICS_ENABLED=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
