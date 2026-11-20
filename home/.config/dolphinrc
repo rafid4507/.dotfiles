@@ -1,3 +1,5 @@
+MenuBar=Disabled
+
 [General]
 Version=202
 ViewPropsTimestamp=2026,11,15,19,40,4.928
@@ -8,3 +10,9 @@ Places Icons Static Size=22
 
 [MainWindow]
 MenuBar=Disabled
+
+[PreviewSettings]
+Plugins=ffmpegthumbnailer,glycin-image-rs,appimagethumbnail,audiothumbnail,glycin-heif,blenderthumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,glycin-jxl,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,gsf-office,mobithumbnail,opendocumentthumbnail,gsthumbnail,rawthumbnail,ffmpegthumbnailer-audio,glycin-svg,svgthumbnail,ffmpegthumbs
+
+[UiSettings]
+ColorScheme=SweetAmbarBlue

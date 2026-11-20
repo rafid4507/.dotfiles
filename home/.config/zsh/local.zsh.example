@@ -1,0 +1,6 @@
+# Machine-local zsh overrides.
+# Copy to ~/.config/zsh/local.zsh (not tracked) and add anything you don't
+# want in the dotfiles repo, e.g.:
+#
+#   export SSH_AUTH_SOCK=/path/to/agent.sock
+#   alias work='cd ~/Projects/work'

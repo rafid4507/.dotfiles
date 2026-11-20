@@ -2,5 +2,5 @@
 WallpaperPlugin=org.kde.image
 
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/wallpapers/EndeavourOS/contents/vadim.jpg
+Image=file:///home/rafid/.local/share/wallpapers/rafid-dotfiles/vadim.jpg
 FillMode=2

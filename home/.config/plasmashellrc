@@ -16,7 +16,7 @@ minLength=1995
 
 [PlasmaViews][Panel 2]
 floating=1
-floatingApplets=1
+floatingApplets=false
 panelLengthMode=0
 panelOpacity=0
 panelVisibility=2

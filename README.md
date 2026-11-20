@@ -4,10 +4,11 @@ Portable KDE Plasma (Wayland) + EndeavourOS/T2-Mac setup.
 
 ## What is tracked
 
-- `home/` – user configs (Plasma panels, themes, **keyboard shortcuts**, KWin, KDE apps, shell, GTK)
+- `home/` – user configs (Plasma panels, themes, **keyboard shortcuts**, KWin, KDE apps, shell, GTK, **zsh**)
 - `system/` – system files that need root (SDDM, keyboard/hid_apple, GRUB, tiny-dfr)
 - `packages/` – explicit pacman packages + AUR foreign packages
 - `scripts/` – helper scripts kept with the setup
+- `wallpapers/` – bundled wallpapers so you don't have to carry them between machines
 
 Keyboard shortcuts are in:
 - `home/.config/kglobalshortcutsrc`
@@ -23,6 +24,55 @@ Keyboard layout is German (DE) only:
 - `home/.config/kxkbrc`
 - `system/etc/X11/xorg.conf.d/00-keyboard.conf`
 - `system/etc/vconsole.conf`
+
+## Zsh
+
+The interactive zsh config lives in `home/.config/zsh/` and is linked into
+`~/.config/zsh/`. `home/.zshenv` is a tiny entry point that sets `ZDOTDIR`.
+
+Modular files:
+
+| File | Purpose |
+| --- | --- |
+| `.zshrc` | history, completion, zoxide/fzf setup, loads the modules below |
+| `aliases.zsh` | eza/bat/ripgrep/nvim/git aliases |
+| `bindings.zsh` | vi-mode, autosuggestion and fzf keybindings |
+| `fzf.zsh` | fzf options and the Ctrl+F file picker |
+| `plugins.zsh` | loads plugins and installs any that are missing |
+| `prompt.zsh` | Starship init |
+| `starship.toml` | prompt theme |
+
+`bootstrap.sh` explicitly installs the shell toolchain (`zsh`, `fzf`, `fd`,
+`ripgrep`, `bat`, `eza`, `starship`, `zoxide`, `neovim`, `lf`) so it does not
+depend on those packages happening to be pulled in as dependencies elsewhere.
+
+Plugins are cloned into `~/.config/zsh/plugins/` by `scripts/setup-zsh-plugins.sh`
+(run automatically by `install.sh`), or on the first shell start by `plugins.zsh`.
+Update them all later with `zplugin-update`.
+
+Machine-only overrides go in `~/.config/zsh/local.zsh` (see
+`local.zsh.example`); it is sourced by `.zshrc` and is intentionally not tracked.
+
+## Wallpapers
+
+Bundled images are in `wallpapers/`. On install they are copied to
+`~/.local/share/wallpapers/rafid-dotfiles/` and `scripts/setup-wallpaper.sh`
+picks one (default: `vadim.jpg`) for the desktop, Plasma slideshow paths and
+the lock screen.
+
+```bash
+~/.dotfiles/scripts/setup-wallpaper.sh                    # default wallpaper
+~/.dotfiles/scripts/setup-wallpaper.sh --wallpaper john.jpg
+~/.dotfiles/scripts/setup-wallpaper.sh --random
+~/.dotfiles/scripts/setup-wallpaper.sh --no-apply          # config only
+```
+
+Add a wallpaper by dropping an image into `wallpapers/` and committing it.
+The SDDM login background is refreshed separately (needs root):
+
+```bash
+sudo bash ~/.dotfiles/scripts/setup-login-theme.sh
+```
 
 ## Install user configs on a new machine
 
@@ -97,7 +147,10 @@ git push
 ```
 
 `sync.sh` copies the live files into `home/` and `system/`, and refreshes the
-package lists. It skips files that are already symlinked into the repo.
+package lists. It now includes the zsh config files too. It skips files that
+are already symlinked into the repo, and does not copy the `~/.zshenv` shim or
+machine-local `local.zsh`. Wallpapers live only in `wallpapers/`; copy any new
+ones there manually.
 
 ## Push updates
 

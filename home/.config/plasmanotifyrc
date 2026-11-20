@@ -1,5 +1,15 @@
+[Applications][com.nextcloud.desktopclient.nextcloud]
+Seen=true
+ShowBadges=false
+ShowPopups=false
+
 [Applications][firefox]
 Seen=true
+
+[Applications][org.kde.konsole]
+ShowBadges=false
+ShowInHistory=false
+ShowPopups=false
 
 [DoNotDisturb]
 Until=2026,11,16,6,0,0.977

@@ -18,6 +18,12 @@ fi
 echo "==> Installing packages (pacman)"
 sudo pacman -S --needed - < "$PACKAGES"
 
+# Some zsh tools are only dependencies on this machine, so pacman -Qqe does
+# not always list them. Keep the shell setup explicit for new installs.
+ZSH_TOOLS=(zsh fzf fd ripgrep bat eza starship zoxide neovim lf)
+echo "==> Ensuring zsh tooling: ${ZSH_TOOLS[*]}"
+sudo pacman -S --needed "${ZSH_TOOLS[@]}"
+
 if [ -s "$REPO/packages/aur-foreign.txt" ]; then
   echo "==> Installing AUR packages"
   if command -v yay >/dev/null 2>&1; then

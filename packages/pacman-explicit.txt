@@ -10,6 +10,7 @@ audacious
 base
 base-devel
 bash-completion
+bat
 bind
 bluedevil
 bluez
@@ -18,7 +19,6 @@ bolt
 breeze-gtk
 btrfs-progs
 cantarell-fonts
-chromium
 code
 cryptsetup
 darktable
@@ -52,15 +52,17 @@ eos-settings-plasma
 ethtool
 ex-vi-compat
 exfatprogs
+eza
 f2fs-tools
 ffmpegthumbnailer
 ffmpegthumbs
 firefox
 firewalld
-fish
 fwupd
 git
 glances
+google-chrome
+graft
 grub
 gst-libav
 gst-plugin-pipewire
@@ -116,9 +118,11 @@ modemmanager
 mtools
 nano
 nano-syntax-highlighting
+neovim
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
+nextcloud-client
 nfs-utils
 nilfs-utils
 noto-fonts
@@ -170,6 +174,7 @@ sg3_utils
 smartmontools
 sof-firmware
 spectacle
+starship
 sudo
 sysfsutils
 systemd-sysvcompat
@@ -179,8 +184,10 @@ telegram-desktop
 texinfo
 tiny-dfr
 tldr
+tmux
 ttf-bitstream-vera
 ttf-dejavu
+ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-opensans
 unrar
@@ -204,3 +211,5 @@ xorg-xrandr
 xsettingsd
 xterm
 yay
+zoxide
+zsh

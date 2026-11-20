@@ -37,6 +37,27 @@ link_user() {
     ln -s "$src" "$dest"
     echo "  linked ~/$rel"
   done < <(find "$REPO/home" -type f -print0)
+
+  # The wallpaper and login scripts rewrite these two files with the current
+  # user's home path. Keep real copies in $HOME so the repo stays clean.
+  for rel in .config/plasma-org.kde.plasma.desktop-appletsrc .config/kscreenlockerrc; do
+    src="$REPO/home/$rel"
+    dest="$HOME/$rel"
+    if [ -L "$dest" ] && [ "$(readlink -f "$dest")" = "$(readlink -f "$src")" ]; then
+      cp --remove-destination "$src" "$dest"
+      echo "  detached ~/$rel (rewritten by wallpaper setup)"
+    fi
+  done
+
+  if [ -x "$REPO/scripts/setup-zsh-plugins.sh" ]; then
+    echo "==> Installing zsh plugins (if missing)"
+    "$REPO/scripts/setup-zsh-plugins.sh" || echo "  warning: zsh plugin setup failed" >&2
+  fi
+
+  if [ -x "$REPO/scripts/setup-wallpaper.sh" ]; then
+    echo "==> Selecting wallpaper"
+    "$REPO/scripts/setup-wallpaper.sh" || echo "  warning: wallpaper setup failed" >&2
+  fi
 }
 
 install_system() {

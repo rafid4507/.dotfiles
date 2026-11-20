@@ -7,6 +7,9 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 HOME_FILES=(
   .bashrc .bash_profile .gitconfig .gtkrc-2.0
+  .config/zsh/.zshenv .config/zsh/.zshrc .config/zsh/aliases.zsh
+  .config/zsh/bindings.zsh .config/zsh/fzf.zsh .config/zsh/plugins.zsh
+  .config/zsh/prompt.zsh .config/zsh/starship.toml
   .config/kxkbrc .config/kcminputrc .config/kdeglobals
   .config/kglobalshortcutsrc .config/kwinrc .config/kwinoutputconfig.json
   .config/ksplashrc .config/ksmserverrc .config/konsolerc
@@ -34,7 +37,13 @@ SYS_FILES=(
 )
 
 same_file() {
-  [ -e "$1" ] && [ -e "$2" ] && [ "$(readlink -f "$1")" = "$(readlink -f "$2")" ]
+  if [ -L "$1" ] || [ -L "$2" ]; then
+    [ -e "$1" ] || [ -L "$1" ] || return 1
+    [ -e "$2" ] || [ -L "$2" ] || return 1
+    [ "$(readlink -f "$1")" = "$(readlink -f "$2")" ]
+  else
+    [ -f "$1" ] && [ -f "$2" ] && cmp -s "$1" "$2"
+  fi
 }
 
 for rel in "${HOME_FILES[@]}"; do

@@ -142,6 +142,7 @@ Theme=Qogir-Light
 [KDE]
 AnimationDurationFactor=0.5
 LookAndFeelPackage=org.kde.breezedark.desktop
+ShowDeleteCommand=false
 SingleClick=true
 contrast=4
 frameContrast=0.2
@@ -150,7 +151,7 @@ widgetStyle=Fusion
 [KFileDialog Settings]
 Allow Expansion=false
 Automatically select filename extension=true
-Breadcrumb Navigation=true
+Breadcrumb Navigation=false
 Decoration position=2
 Show Full Path=false
 Show Inline Previews=true
@@ -166,6 +167,10 @@ View Style=DetailTree
 
 [KShortcutsDialog Settings]
 Dialog Size=1699,1035
+
+[PreviewSettings]
+EnableRemoteFolderThumbnail=false
+MaximumRemoteSize=0
 
 [WM]
 activeBackground=39,44,49

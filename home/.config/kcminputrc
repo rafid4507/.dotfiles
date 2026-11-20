@@ -1,2 +1,12 @@
+[Libinput][1452][635][Apple Inc. Apple Internal Keyboard / Trackpad]
+DisableWhileTyping=false
+PointerAcceleration=0.600
+ScrollFactor=2
+TapAndDrag=false
+TapToClick=false
+
+[Libinput][4617][12654][Dynamic Function Row Virtual Input Device]
+ScrollFactor=2
+
 [Mouse]
 cursorTheme=Breeze_Light
