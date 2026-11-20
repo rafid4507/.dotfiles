@@ -77,7 +77,7 @@ sudo bash ~/.dotfiles/scripts/setup-login-theme.sh
 ## Install user configs on a new machine
 
 ```bash
-git clone https://github.com/rafid4507/.dotfiles.git ~/.dotfiles
+git clone git@github.com:rafid4507/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./install.sh
 ```
@@ -161,7 +161,7 @@ git commit -m "Update dotfiles"
 git push
 ```
 
-The remote is `https://github.com/rafid4507/.dotfiles.git`. If you need to replace the old history completely:
+The remote is `git@github.com:rafid4507/.dotfiles.git` (SSH). For HTTPS, generate a Personal Access Token and use it as the password. If you need to replace the old history completely:
 
 ```bash
 git push --force -u origin main
