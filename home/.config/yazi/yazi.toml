@@ -1,0 +1,7 @@
+# Yazi config — overrides the shipped defaults.
+# https://yazi-rs.github.io/docs/configuration/yazi
+
+[preview]
+# Konsole draws images itself (Kitty old protocol), so previews can appear
+# immediately instead of waiting for the default 30ms debounce.
+image_delay = 0

@@ -40,6 +40,15 @@ lf() { # zsh follow lf navigation
     fi
 }
 
+y() { # yazi: browse files, cd to the last visited directory on quit
+    local tmp cwd
+    tmp=$(mktemp -t yazi-cwd.XXXXXX)
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+    command rm -f -- "$tmp"
+}
+
 # =========================================================
 # Editor
 # =========================================================

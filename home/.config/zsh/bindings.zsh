@@ -16,6 +16,13 @@ ZVM_VI_HIGHLIGHT_EXTRASTYLE=none
 # suggestion. Clear that list so only the smart Tab widget below accepts.
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=()
 
+# Ctrl+Y -> launch yazi via the `y` wrapper from aliases.zsh.
+_yazi_widget() {
+  BUFFER='y'
+  CURSOR=${#BUFFER}
+  zle accept-line
+}
+
 # zsh-vi-mode resets all bindings on init, so custom bindings
 # must be registered via this hook to survive.
 zvm_after_init() {
@@ -42,6 +49,11 @@ zvm_after_init() {
 
   # Ctrl+F -> fzf file picker (no hidden files)
   bindkey '^F' _fzf_file_no_hidden
+
+  # Ctrl+Y -> yazi file manager (cd to last directory on quit)
+  zle -N _yazi_widget
+  bindkey -M viins '^Y' _yazi_widget
+  bindkey -M vicmd '^Y' _yazi_widget
 
   # Ctrl+\ -> toggle autosuggestions (useful for screen recordings)
   bindkey '^\' autosuggest-toggle

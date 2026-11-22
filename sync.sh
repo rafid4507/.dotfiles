@@ -10,6 +10,7 @@ HOME_FILES=(
   .config/zsh/.zshenv .config/zsh/.zshrc .config/zsh/aliases.zsh
   .config/zsh/bindings.zsh .config/zsh/fzf.zsh .config/zsh/plugins.zsh
   .config/zsh/prompt.zsh .config/zsh/starship.toml
+  .config/yazi/yazi.toml .config/yazi/keymap.toml
   .config/kxkbrc .config/kcminputrc .config/kdeglobals
   .config/kglobalshortcutsrc .config/kwinrc .config/kwinoutputconfig.json
   .config/ksplashrc .config/ksmserverrc .config/konsolerc
