@@ -186,6 +186,7 @@ sudo pacman -S --needed - < packages/pacman-explicit.txt
 - `scripts/fix-keyboard.sh` – Fn/left-Ctrl swap + Alt/Win (Option/Command) swap for T2 Mac, rebuild initramfs.
 - `scripts/setup-login-theme.sh` – stable Qt6 Breeze SDDM theme + blurred login wallpaper. It uses the current Plasma wallpaper by default; pass an image path to override:
   `sudo bash scripts/setup-login-theme.sh /path/to/wallpaper.jpg`
+- `scripts/apply-touchbar.sh` – installs the tiny-dfr Touch Bar layout: F1–F12 + **Del** in the function row, no date/time, no battery percentage, and **Del** in the media layer beside volume down/up.
 
 ## Notes
 

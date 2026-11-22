@@ -116,14 +116,14 @@ PrimaryLayerKeys = [
     # You can also put in your format string directly.
     # The available variables can be found here: https://docs.rs/chrono/latest/chrono/format/strftime/index.html
     # If your time block says "Time format error" you are using some invalid parameter.
-    { Time = "%H:%M %-e.%m.%Y", Action = "Time", Stretch = 2},
+    { Text = "Del", Action = "Delete" },
 
     # Example of Battery:
     # { Battery = "percentage", Action = "Battery" }
     # This will display a button showing the current battery percentage.
     # { Battery = "icon", Action = "Battery" }
     # This will display a button showing a battery icon instead of percentage.
-    { Battery = "both", Action = "Battery" },
+    # Battery percentage button removed by request.
     # This will display a button showing a battery icon as well as percentage.
     # The logic used to calcuate the percentage will be:
     # 1. On T2 Macs:
@@ -150,7 +150,8 @@ MediaLayerKeys = [
     { Icon = "fast_forward",    Action = "NextSong"       },
     { Icon = "volume_off",      Action = "Mute"           },
     { Icon = "volume_down",     Action = "VolumeDown"     },
-    { Icon = "volume_up",       Action = "VolumeUp"       }
+    { Icon = "volume_up",       Action = "VolumeUp"       },
+    { Text = "Del",             Action = "Delete"         }
 
     # Example with XDG icons (requires `breeze-dark` theme installed):
     # { Icon = "brightness-low",       Theme = "breeze-dark", Action = "BrightnessDown" },
