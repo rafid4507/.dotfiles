@@ -7,6 +7,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 HOME_FILES=(
   .bashrc .bash_profile .gitconfig .gtkrc-2.0
+  .local/bin/apply-niri-kde-shortcuts.sh .local/bin/apply-niri-kde-shortcuts-live.py
   .config/zsh/.zshenv .config/zsh/.zshrc .config/zsh/aliases.zsh
   .config/zsh/bindings.zsh .config/zsh/fzf.zsh .config/zsh/plugins.zsh
   .config/zsh/prompt.zsh .config/zsh/starship.toml

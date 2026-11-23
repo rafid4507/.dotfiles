@@ -7,8 +7,8 @@ Id_5=06a72172-f251-4983-b2e1-fc54024969ee
 Name_1=Study
 Name_2=Project
 Name_3=Job
-Name_4=Entertainment
-Name_5=Browsers
+Name_4=Opencode
+Name_5=Sukuna
 Number=5
 Rows=1
 
@@ -24,16 +24,23 @@ desktopchangeosdEnabled=true
 diminactiveEnabled=true
 eyeonscreenEnabled=true
 fadeEnabled=true
-fadedesktopEnabled=true
+karouselEnabled=true
+karousel_overviewEnabled=true
 scaleEnabled=false
 sheetEnabled=true
-slideEnabled=false
 slidebackEnabled=true
 thumbnailasideEnabled=true
 touchpointsEnabled=true
 translucencyEnabled=true
 windowapertureEnabled=false
 wobblywindowsEnabled=true
+
+[TabBox]
+ApplicationsMode=1
+DesktopMode=2
+LayoutName=compact
+OrderMinimizedMode=1
+ShowDesktopMode=1
 
 [Tiling][06a72172-f251-4983-b2e1-fc54024969ee][]
 padding=4

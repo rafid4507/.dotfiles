@@ -230,7 +230,7 @@ plugin=org.kde.plasma.panelspacer
 
 [Containments][2][Applets][187][Configuration][General]
 expanding=false
-length=840
+length=700
 
 [Containments][2][Applets][190]
 immutability=1
@@ -286,7 +286,7 @@ plugin=org.kde.plasma.panelspacer
 
 [Containments][2][Applets][202][Configuration][General]
 expanding=false
-length=500
+length=560
 
 [Containments][2][Applets][23]
 immutability=1
@@ -465,7 +465,7 @@ Blur=true
 Image=file:///home/rafid/.local/share/wallpapers/rafid-dotfiles/vadim.jpg
 SlideInterval=1200
 SlidePaths=/home/rafid/.local/share/wallpapers/rafid-dotfiles
-UncheckedSlides=/usr/share/wallpapers/Next/contents/vadim.jpg,/usr/share/wallpapers/Next/contents/john.jpg,/usr/share/wallpapers/Next/contents/daniel.jpg,/usr/share/wallpapers/Next/contents/dejan.jpg,/usr/share/wallpapers/EndeavourOS/,/usr/share/wallpapers/Next/,/usr/share/wallpapers/EndeavourOS/contents/daniel.jpg
+UncheckedSlides=/usr/share/wallpapers/Next/contents/vadim.jpg,/usr/share/wallpapers/Next/contents/john.jpg,/usr/share/wallpapers/Next/contents/daniel.jpg,/usr/share/wallpapers/Next/contents/dejan.jpg,/usr/share/wallpapers/EndeavourOS/,/usr/share/wallpapers/Next/,/usr/share/wallpapers/EndeavourOS/contents/daniel.jpg,/home/rafid/.local/share/wallpapers/rafid-dotfiles/amirhossein.jpg,/home/rafid/.local/share/wallpapers/rafid-dotfiles/daniel.jpg,/home/rafid/.local/share/wallpapers/rafid-dotfiles/john.jpg
 
 [ScreenMapping]
 itemsOnDisabledScreens=

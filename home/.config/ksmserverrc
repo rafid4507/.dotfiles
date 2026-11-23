@@ -1,8 +1,8 @@
 [Session: saved at previous logout]
-clientId1=10c0dddc61000179497596300000009630011
+clientId1=10c0dddc61000000002854800000008560000
 count=1
 discardCommand1[$e]=
 program1=firefox
-restartCommand1=/usr/lib/firefox/firefox,--sm-client-id,10c0dddc61000179497596300000009630011
+restartCommand1=/usr/lib/firefox/firefox,--sm-client-id,10c0dddc61000000002854800000008560000
 restartStyleHint1=0
 userId1=rafid

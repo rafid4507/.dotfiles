@@ -137,6 +137,7 @@ openssh
 os-prober
 pacman-contrib
 pavucontrol
+pear-desktop-bin
 perl
 pipewire-alsa
 pipewire-jack
@@ -211,5 +212,6 @@ xorg-xrandr
 xsettingsd
 xterm
 yay
+yazi
 zoxide
 zsh

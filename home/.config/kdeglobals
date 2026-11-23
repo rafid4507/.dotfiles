@@ -143,7 +143,6 @@ Theme=Qogir-Light
 AnimationDurationFactor=0.5
 LookAndFeelPackage=org.kde.breezedark.desktop
 ShowDeleteCommand=false
-SingleClick=true
 contrast=4
 frameContrast=0.2
 widgetStyle=Fusion
@@ -151,7 +150,7 @@ widgetStyle=Fusion
 [KFileDialog Settings]
 Allow Expansion=false
 Automatically select filename extension=true
-Breadcrumb Navigation=false
+Breadcrumb Navigation=true
 Decoration position=2
 Show Full Path=false
 Show Inline Previews=true

@@ -2,7 +2,7 @@
 alignment=132
 floating=1
 panelLengthMode=0
-panelVisibility=2
+panelVisibility=0
 shell=org.kde.plasma.desktop
 
 [PlasmaViews][Panel 103][Defaults]
@@ -19,7 +19,7 @@ floating=1
 floatingApplets=false
 panelLengthMode=0
 panelOpacity=0
-panelVisibility=2
+panelVisibility=0
 shell=org.kde.plasma.desktop
 
 [PlasmaViews][Panel 2][Defaults]
