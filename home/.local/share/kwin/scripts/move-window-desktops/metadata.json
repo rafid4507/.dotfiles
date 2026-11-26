@@ -1,0 +1,12 @@
+{
+  "KPlugin": {
+    "Id": "move-window-desktops",
+    "Name": "Move Window Multiple Desktops",
+    "Description": "Move the active window multiple virtual desktops up or down",
+    "License": "MIT",
+    "Version": "1.0"
+  },
+  "KPackageStructure": "KWin/Script",
+  "X-Plasma-API": "javascript",
+  "X-Plasma-MainScript": "code/main.js"
+}

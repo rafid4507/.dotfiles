@@ -47,11 +47,21 @@ kw kwin -- 'karousel-focus-right' 'Alt+L,none,Karousel: Focus column right'
 kw kwin -- 'karousel-focus-up'    'Alt+J,none,Karousel: Focus window above'
 kw kwin -- 'karousel-focus-down'  'Alt+K,none,Karousel: Focus window below'
 
-# ---------- Workspace navigation and moving columns ----------
+# ---------- Workspace navigation and moving windows ----------
 kw kwin -- 'Switch to Previous Desktop' 'Meta+J,none,Switch to Previous Desktop'
 kw kwin -- 'Switch to Next Desktop'     'Meta+K,none,Switch to Next Desktop'
-kw kwin -- 'karousel-column-move-to-previous-desktop' 'Meta+U,none,Karousel: Move column to previous desktop'
-kw kwin -- 'karousel-column-move-to-next-desktop'     'Meta+I,none,Karousel: Move column to next desktop'
+# Native KWin actions work for tiled, floating, and non-Karousel windows.
+# PerOutputVirtualDesktops makes Next/Previous Screen pin oddly; use directional screen moves.
+kw kwin -- 'Window One Screen to the Left'  'Meta+U,none,Move Window One Screen to the Left'
+kw kwin -- 'Window One Screen to the Right' 'Meta+I,none,Move Window One Screen to the Right'
+kw kwin -- 'Window to Previous Screen' 'none,none,Move Window to Previous Screen'
+kw kwin -- 'Window to Next Screen'     'none,none,Move Window to Next Screen'
+kw kwin -- 'Window to Previous Desktop' 'Meta+Shift+U,none,Window to Previous Desktop'
+kw kwin -- 'Window to Next Desktop'     'Meta+Shift+I,none,Window to Next Desktop'
+kw kwin -- 'Window One Desktop Up'   'none,none,Window One Desktop Up'
+kw kwin -- 'Window One Desktop Down' 'none,none,Window One Desktop Down'
+kw kwin -- 'karousel-column-move-to-previous-desktop' 'none,none,Karousel: Move column to previous desktop'
+kw kwin -- 'karousel-column-move-to-next-desktop'     'none,none,Karousel: Move column to next desktop'
 
 # Free Meta+1..9 on Karousel so KWin can own them for desktops.
 for n in 1 2 3 4 5 6 7 8 9; do
@@ -70,15 +80,25 @@ kw kwin -- 'karousel-cycle-preset-widths'    'Meta+R,none,Karousel: Cycle throug
 kw kwin -- 'Window Maximize' 'Meta+F,Meta+PgUp,Maximize Window'
 kw kwin -- 'Window Close'    'Meta+Q,Alt+F4,Close Window'
 
-# Karousel Overview is the primary overview; KWin's built-in one gets no shortcut.
-kw kwin -- 'Karousel Overview' $'Meta+O\tMeta+Ctrl+O,none,Karousel: Toggle overview'
-kw kwin -- 'Overview'          'none,Meta+W,Toggle Overview'
+# KWin built-in Overview on Meta+O. Clear old Karousel Overview binding.
+kw kwin -- 'Karousel Overview' 'none,none,Karousel: Toggle overview'
+kw kwin -- 'Overview'          'Meta+O,Meta+W,Toggle Overview'
 
-# Make sure the effect and Karousel stay enabled on next KWin start.
+# Make sure Karousel stays enabled; use KWin built-in Overview.
 kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
   --group Plugins --key karouselEnabled true --notify
 kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
-  --group Plugins --key karousel_overviewEnabled true --notify
+  --group Plugins --key overviewEnabled true --notify
+kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
+  --group Plugins --key karousel_overviewEnabled false --notify
+
+# Follow the active window to its workspace and keep it raised.
+kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
+  --group Windows --key AutoRaise true --notify
+kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
+  --group Windows --key ClickRaise true --notify
+kwriteconfig6 --file "${XDG_CONFIG_HOME:-$HOME/.config}/kwinrc" \
+  --group Windows --key ActivationDesktopPolicy 0 --notify
 
 # ---------- KWin: virtual desktops ----------
 declare -A SWITCH_DEFAULTS=(
@@ -113,5 +133,6 @@ kw services org.kde.krunner.desktop -- _launch $'Alt+F2\tMeta+D'
 kw services org.kde.konsole.desktop -- _launch $'Meta+Return\tMeta+T'
 kw services systemsettings.desktop -- _launch 'Meta+S'
 kw services org.kde.plasma-systemmonitor.desktop -- _launch 'Ctrl+Shift+Esc'
+# Move window 2 desktops up/down is handled by the KWin script: move-window-desktops.
 
 echo "Done. Run apply-niri-kde-shortcuts-live.py to apply without logging out."

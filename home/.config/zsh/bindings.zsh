@@ -50,7 +50,7 @@ zvm_after_init() {
   # Ctrl+F -> fzf file picker (no hidden files)
   bindkey '^F' _fzf_file_no_hidden
 
-  # Ctrl+Y -> yazi file manager (cd to last directory on quit)
+  # Ctrl+Y -> yazi file manager
   zle -N _yazi_widget
   bindkey -M viins '^Y' _yazi_widget
   bindkey -M vicmd '^Y' _yazi_widget

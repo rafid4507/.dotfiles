@@ -58,11 +58,21 @@ add("kwin", "karousel-focus-right", [k(a=True, key=LETTERS["L"])])
 add("kwin", "karousel-focus-up", [k(a=True, key=LETTERS["J"])])
 add("kwin", "karousel-focus-down", [k(a=True, key=LETTERS["K"])])
 
-# ---- Workspace navigation and moving columns ----
+# ---- Workspace navigation and moving windows ----
 add("kwin", "Switch to Previous Desktop", [k(m=True, key=LETTERS["J"])])
 add("kwin", "Switch to Next Desktop", [k(m=True, key=LETTERS["K"])])
-add("kwin", "karousel-column-move-to-previous-desktop", [k(m=True, key=LETTERS["U"])])
-add("kwin", "karousel-column-move-to-next-desktop", [k(m=True, key=LETTERS["I"])])
+# Native KWin actions work for any window (tiled, floating, or app-owned).
+# PerOutputVirtualDesktops makes Next/Previous Screen pin oddly; use directional screen moves.
+add("kwin", "Window One Screen to the Left", [k(m=True, key=LETTERS["U"])])
+add("kwin", "Window One Screen to the Right", [k(m=True, key=LETTERS["I"])])
+add("kwin", "Window to Previous Screen", [])
+add("kwin", "Window to Next Screen", [])
+add("kwin", "Window to Previous Desktop", [k(m=True, s=True, key=LETTERS["U"])])
+add("kwin", "Window to Next Desktop", [k(m=True, s=True, key=LETTERS["I"])])
+add("kwin", "Window One Desktop Up", [])
+add("kwin", "Window One Desktop Down", [])
+add("kwin", "karousel-column-move-to-previous-desktop", [])
+add("kwin", "karousel-column-move-to-next-desktop", [])
 
 for n in range(1, 10):
     add("kwin", f"karousel-focus-{n}", [])
@@ -81,10 +91,9 @@ add("kwin", "karousel-cycle-preset-widths", [k(m=True, key=LETTERS["R"])])
 add("kwin", "Window Maximize", [k(m=True, key=LETTERS["F"])])
 add("kwin", "Window Close", [k(m=True, key=LETTERS["Q"])])
 
-# Karousel Overview owns Meta+O; Plasma's built-in Overview gets no shortcut.
-add("kwin", "Karousel Overview",
-    [k(m=True, key=LETTERS["O"]), k(m=True, c=True, key=LETTERS["O"])])
-add("kwin", "Overview", [])
+# KWin built-in Overview on Meta+O. Clear old Karousel Overview binding.
+add("kwin", "Karousel Overview", [])
+add("kwin", "Overview", [k(m=True, key=LETTERS["O"])])
 add("kwin", "Walk Through Windows",
     [k(a=True, key=TAB), k(m=True, key=TAB), k(m=True, key=LETTERS["Z"])])
 add("kwin", "Walk Through Windows (Reverse)",
@@ -115,6 +124,7 @@ add("org.kde.konsole.desktop", "_launch",
     [k(m=True, key=RETURN), k(m=True, key=LETTERS["T"])])
 add("systemsettings.desktop", "_launch", [k(m=True, key=LETTERS["S"])])
 add("org.kde.plasma-systemmonitor.desktop", "_launch", [k(c=True, s=True, key=ESC)])
+# Move-window-2-desktops is handled by a KWin script (move-window-desktops).
 
 
 def busctl_json(*args):
@@ -126,10 +136,13 @@ def busctl_json(*args):
 
 
 def descriptor(component, unique):
-    data = busctl_json(
-        "call", "org.kde.kglobalaccel", COMPONENTS[component],
-        "org.kde.kglobalaccel.Component", "allShortcutInfos",
-    )["data"][0]
+    try:
+        data = busctl_json(
+            "call", "org.kde.kglobalaccel", COMPONENTS[component],
+            "org.kde.kglobalaccel.Component", "allShortcutInfos",
+        )["data"][0]
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"Component {component} not available: {exc.stderr.strip()}") from exc
     for entry in data:
         if entry[0] == unique:
             return [entry[2], entry[0], entry[3], entry[1]]
@@ -145,23 +158,7 @@ def set_shortcut(desc, keys):
     return busctl_json(*args)["data"][0]
 
 
-def ensure_karousel_overview():
-    """The effect must be loaded before its global shortcut action exists."""
-    res = subprocess.run(
-        ["qdbus6", "org.kde.KWin", "/Effects",
-         "org.kde.kwin.Effects.isEffectLoaded", "karousel_overview"],
-        capture_output=True, text=True,
-    )
-    if res.stdout.strip() != "true":
-        subprocess.run(
-            ["qdbus6", "org.kde.KWin", "/Effects",
-             "org.kde.kwin.Effects.loadEffect", "karousel_overview"],
-            check=True, capture_output=True, text=True,
-        )
-        print("Loaded Karousel Overview effect.")
-
-
-ensure_karousel_overview()
+# Karousel Overview removed; using KWin built-in Overview.
 
 applied = 0
 for component, actions in wanted.items():

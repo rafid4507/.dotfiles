@@ -199,6 +199,7 @@ usbutils
 welcome
 wget
 which
+wireless-regdb
 wireplumber
 wpa_supplicant
 xdg-desktop-portal-kde

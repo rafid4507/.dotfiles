@@ -5,3 +5,10 @@
 # Konsole draws images itself (Kitty old protocol), so previews can appear
 # immediately instead of waiting for the default 30ms debounce.
 image_delay = 0
+
+[plugin]
+# Force previews by extension so MIME detection cannot leave them blank.
+prepend_previewers = [
+  { url = "*.txt", run = "txt" },
+  { url = "*.docx", run = "docx" },
+]

@@ -19,28 +19,30 @@ BlurStrength=14
 AnimationDuration=230
 
 [Plugins]
-cubeEnabled=true
 desktopchangeosdEnabled=true
 diminactiveEnabled=true
 eyeonscreenEnabled=true
 fadeEnabled=true
 karouselEnabled=true
-karousel_overviewEnabled=true
+karousel_overviewEnabled=false
+minimizeallEnabled=true
+move-window-desktopsEnabled=true
+overviewEnabled=true
 scaleEnabled=false
 sheetEnabled=true
 slidebackEnabled=true
 thumbnailasideEnabled=true
 touchpointsEnabled=true
 translucencyEnabled=true
+virtualdesktopsonlyonprimaryEnabled=true
 windowapertureEnabled=false
 wobblywindowsEnabled=true
 
 [TabBox]
 ApplicationsMode=1
-DesktopMode=2
 LayoutName=compact
+MinimizedMode=1
 OrderMinimizedMode=1
-ShowDesktopMode=1
 
 [Tiling][06a72172-f251-4983-b2e1-fc54024969ee][]
 padding=4
@@ -167,8 +169,14 @@ padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Windows]
+ActivationDesktopPolicy=0
+AutoRaise=true
+BorderSnapZone=8
+ClickRaise=true
+FocusPolicy=FocusFollowsMouse
 PerOutputVirtualDesktops=true
 RollOverDesktops=true
+WindowSnapZone=8
 
 [Xwayland]
 Scale=1.5
